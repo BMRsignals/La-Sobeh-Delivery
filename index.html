@@ -53,6 +53,19 @@
     border: 1px solid #ddd; border-radius: 10px; background: #fff; font-family: inherit;
   }
   .input-group textarea { min-height: 80px; resize: vertical; }
+  .search-bar {
+    width: 100%; padding: 12px 14px; font-size: 15px; border: 1px solid #ddd;
+    border-radius: 12px; background: #fff; margin-bottom: 10px;
+  }
+  .cat-bar {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cat-bar button {
+    flex: 0 0 auto; padding: 8px 16px; border-radius: 20px; border: 1px solid #ddd;
+    background: #fff; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap;
+  }
+  .cat-bar button.active { background: #c8102e; color: #fff; border-color: #c8102e; }
   .menu-item {
     display: flex; align-items: center; gap: 12px;
     padding: 12px 0; border-bottom: 1px solid #eee;
@@ -65,6 +78,7 @@
   .menu-item .info { flex: 1; min-width: 0; }
   .menu-item .name { font-size: 15px; font-weight: 600; }
   .menu-item .price { font-size: 13px; color: #c8102e; font-weight: 600; margin-top: 2px; }
+  .menu-item .from { font-size: 11px; color: #888; margin-top: 2px; }
   .add-btn {
     background: #c8102e; color: #fff; border: none; padding: 8px 14px;
     border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
@@ -86,9 +100,12 @@
     display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 600;
     border-radius: 20px; background: #e5e5ea; color: #333;
   }
+  .pill.pending { background: #ffe5e9; color: #a00d24; }
+  .pill.accepted { background: #d1ecf1; color: #0c5460; }
   .pill.preparing { background: #fff3cd; color: #856404; }
   .pill.ontheway { background: #cce5ff; color: #004085; }
   .pill.delivered { background: #d4edda; color: #155724; }
+  .pill.rejected { background: #f8d7da; color: #721c24; }
   .small { font-size: 12px; color: #888; }
   .zone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .zone-grid button {
@@ -113,6 +130,7 @@
     background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 10px;
     box-shadow: 0 1px 4px rgba(0,0,0,.06); cursor: pointer;
   }
+  .order-card.pending-highlight { border-left: 5px solid #c8102e; background: #fff8f9; }
   .order-card .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .order-card .id { font-size: 13px; font-weight: 700; color: #c8102e; }
   .order-card .name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
@@ -124,6 +142,18 @@
   }
   .login-logo { display: block; max-width: 180px; margin: 0 auto 14px; }
   .loading { text-align: center; padding: 40px; color: #888; }
+  .wallet-badge {
+    display: inline-block; background: #d4edda; color: #155724; font-weight: 700;
+    padding: 6px 12px; border-radius: 20px; font-size: 13px;
+  }
+  .token-badge {
+    display: inline-block; background: #fff3cd; color: #856404; font-weight: 700;
+    padding: 6px 12px; border-radius: 20px; font-size: 13px;
+  }
+  .photo-preview {
+    width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px;
+    margin-top: 8px; background: #f5f5f5;
+  }
 </style>
 </head>
 <body>
@@ -140,7 +170,10 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, setDoc,
+  query, where, orderBy, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAjU73kFvCQ40FNT-reyZvqRgBtTBqN0ag",
@@ -155,44 +188,48 @@ const db = getFirestore(fbApp);
 
 const ADMIN_PIN = "3397";
 const WHISH_NUMBER = "71180336";
+const WHATSAPP_NUMBER = "71180336";
 const DRIVER_NAME = "Mizo";
 const DRIVER_PHONE = "03033331";
+const USD_RATE = 90000;
 
 const ZONES = [
-  { name:"Zahle",     fee:200000 },
-  { name:"Chtoura",   fee:350000 },
-  { name:"Saadnayel", fee:350000 },
-  { name:"Karak",     fee:350000 },
-  { name:"Ferzoul",   fee:350000 },
-  { name:"Ablah",     fee:350000 },
-  { name:"Tamnin",    fee:350000 },
-  { name:"Rayak",     fee:350000 },
-  { name:"Ksara",     fee:350000 }
+  { name:"Zahle",     feeLL:200000, feeUSD:3 },
+  { name:"Chtoura",   feeLL:350000, feeUSD:4 },
+  { name:"Saadnayel", feeLL:350000, feeUSD:4 },
+  { name:"Karak",     feeLL:350000, feeUSD:4 },
+  { name:"Ferzoul",   feeLL:350000, feeUSD:4 },
+  { name:"Ablah",     feeLL:350000, feeUSD:4 },
+  { name:"Tamnin",    feeLL:350000, feeUSD:4 },
+  { name:"Rayak",     feeLL:350000, feeUSD:4 },
+  { name:"Ksara",     feeLL:350000, feeUSD:4 }
 ];
+
+const CATEGORIES = ["All","Burgers","Sandwiches","Grills","Combos","Juices","Soft Drinks","Grocery","Packages","Errands"];
 
 const RESTAURANTS = [
   {
     id:"efendim", name:"Efendim Restaurant", cuisine:"Turkish",
     location:"Zahle", logo:"efendim.png.jpg",
     menu:[
-      { id:"ef1", name:"Tawouk Sandwich",  price:700000,  img:"efendim-tawouk.png.jpg.JPG" },
-      { id:"ef2", name:"Chicken Efendim",  price:1200000, img:"efendim-chicken.png.jpg.JPG" }
+      { id:"ef1", name:"Tawouk Sandwich",  priceLL:700000,  priceUSD:8,  img:"efendim-tawouk.png.jpg.JPG", cat:"Sandwiches" },
+      { id:"ef2", name:"Chicken Efendim",  priceLL:1200000, priceUSD:14, img:"efendim-chicken.png.jpg.JPG", cat:"Grills" }
     ]
   },
   {
     id:"grillgo", name:"Grill & Go Restaurant", cuisine:"Fast Food",
     location:"Zahle", logo:"grillgo.png.jpg",
     menu:[
-      { id:"gg1", name:"Zinger Combo", price:800000, img:"grillgo-zinger.png.jpg.JPG" },
-      { id:"gg2", name:"Cranch Boss",  price:600000, img:"grillgo-cranch.png.jpg.JPG" }
+      { id:"gg1", name:"Zinger Combo", priceLL:800000, priceUSD:9, img:"grillgo-zinger.png.jpg.JPG", cat:"Combos" },
+      { id:"gg2", name:"Cranch Boss",  priceLL:600000, priceUSD:7, img:"grillgo-cranch.png.jpg.JPG", cat:"Burgers" }
     ]
   },
   {
     id:"beitmisk", name:"Beit Misk Restaurant", cuisine:"Lebanese Grill",
     location:"Zahle", logo:"beitmisk.png.jpg",
     menu:[
-      { id:"bm1", name:"Kabab Plate",   price:700000,  img:"beitmisk-kabab.png.jpg.WEBP" },
-      { id:"bm2", name:"Mandi Chicken", price:1200000, img:"beitmisk-mandi.png.jpg.AVIF" }
+      { id:"bm1", name:"Kabab Plate",   priceLL:700000,  priceUSD:8,  img:"beitmisk-kabab.png.jpg.WEBP", cat:"Grills" },
+      { id:"bm2", name:"Mandi Chicken", priceLL:1200000, priceUSD:14, img:"beitmisk-mandi.png.jpg.AVIF", cat:"Grills" }
     ]
   }
 ];
@@ -201,52 +238,80 @@ const GROCERY = {
   id:"grocery", name:"La-Sobeh Grocery", cuisine:"Grocery",
   location:"Zahle", logo:"",
   menu:[
-    { id:"g1", name:"Red Bull", price:500000, img:"grocery-redbull.png.jpg.WEBP" },
-    { id:"g2", name:"Pepsi",    price:100000, img:"grocery-pepsi.png.jpg.WEBP" }
+    { id:"g1", name:"Red Bull", priceLL:500000, priceUSD:6, img:"grocery-redbull.png.jpg.WEBP", cat:"Soft Drinks" },
+    { id:"g2", name:"Pepsi",    priceLL:100000, priceUSD:2, img:"grocery-pepsi.png.jpg.WEBP", cat:"Soft Drinks" }
   ]
 };
 
 let state = {
   screen:"login", user:null, category:null, vendor:null,
-  cart:[], zone:null, payment:null, currentOrder:null,
-  liveOrders:[], unsub:null
+  cart:[], zone:null, payment:null, currency:"LL", search:"", activeCat:"All",
+  currentOrder:null, wallet:{ balance:0, tokens:0 },
+  deliveryType:"food",
+  packageInfo:null
 };
 
-const LSK = { session:"lasobeh_session_v3" };
+const LSK = { session:"lasobeh_session_v4" };
 function setSession(s){ s?localStorage.setItem(LSK.session,JSON.stringify(s)):localStorage.removeItem(LSK.session) }
 function getSession(){ try{return JSON.parse(localStorage.getItem(LSK.session))}catch(e){return null} }
 
-function money(n){ return n.toLocaleString()+" L.L" }
+function money(n, cur){ 
+  if(cur==="USD") return "$"+n;
+  return n.toLocaleString()+" L.L";
+}
+function itemPrice(item, cur){ return cur==="USD" ? item.priceUSD : item.priceLL }
 function el(html){ const d=document.createElement("div"); d.innerHTML=html.trim(); return d.firstChild }
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])) }
 function cartCount(){ return state.cart.reduce((s,i)=>s+i.qty,0) }
 function cartTotal(){ return state.cart.reduce((s,i)=>s+i.price*i.qty,0) }
-function zoneFee(){ const z=ZONES.find(z=>z.name===state.zone); return z?z.fee:0 }
+function zoneFee(){ const z=ZONES.find(z=>z.name===state.zone); if(!z) return 0; return state.currency==="USD"?z.feeUSD:z.feeLL }
 function grandTotal(){ return cartTotal()+zoneFee() }
 function phoneKey(p){ return p.replace(/[^0-9]/g,"") }
+function statusLabel(s){ 
+  return s==="pending"?"Pending approval":s==="accepted"?"Accepted":s==="preparing"?"Preparing":
+         s==="ontheway"?"On the way":s==="delivered"?"Delivered":s==="rejected"?"Rejected":s;
+}
 
-function statusLabel(s){ return s==="preparing"?"Preparing":s==="ontheway"?"On the way":s==="delivered"?"Delivered":s }
+async function loadWallet(){
+  if(!state.user) return;
+  try{
+    const ref=doc(db,"customers",state.user.key);
+    const snap=await getDoc(ref);
+    if(snap.exists()){
+      const d=snap.data();
+      state.wallet={ balance:d.balance||0, tokens:d.tokens||0 };
+    } else {
+      state.wallet={ balance:0, tokens:0 };
+    }
+  }catch(e){ console.warn(e) }
+}
 
 function render(){
   const app=document.getElementById("app"); app.innerHTML="";
   const s=state.screen;
   if(s==="login") app.appendChild(viewLogin());
   else if(s==="home") app.appendChild(viewHome());
+  else if(s==="search") app.appendChild(viewSearch());
   else if(s==="foodList") app.appendChild(viewFoodList());
   else if(s==="vendor") app.appendChild(viewVendor());
   else if(s==="checkout") app.appendChild(viewCheckout());
   else if(s==="confirm") app.appendChild(viewConfirm());
   else if(s==="track") app.appendChild(viewTrack());
   else if(s==="myOrders") app.appendChild(viewMyOrders());
+  else if(s==="wallet") app.appendChild(viewWallet());
+  else if(s==="topup") app.appendChild(viewTopUp());
+  else if(s==="package") app.appendChild(viewPackage());
   else if(s==="adminLogin") app.appendChild(viewAdminLogin());
   else if(s==="admin") app.appendChild(viewAdmin());
   else if(s==="adminOrder") app.appendChild(viewAdminOrder());
+  else if(s==="adminWallet") app.appendChild(viewAdminWallet());
+  else if(s==="adminStats") app.appendChild(viewAdminStats());
   window.scrollTo(0,0);
 }
 
 function viewLogin(){
   const w=el(`<div>
-    <img class="login-logo" src="la-sobeh-logo.png.jpg.jpg" alt="La-Sobeh Delivery" onerror="this.style.display='none'">
+    <img class="login-logo" src="la-sobeh-logo.png.jpg.jpg" alt="La-Sobeh" onerror="this.style.display='none'">
     <div class="card"><h2>Welcome 👋</h2><p>Login with your name and phone number to place an order.</p></div>
     <div class="card">
       <div class="input-group"><label>Phone Number</label><input id="lp" type="tel" placeholder="70 123 456"></div>
@@ -261,10 +326,9 @@ function viewLogin(){
     const key=phoneKey(lp.value.trim());
     if(key.length<7) return;
     try{
-      const q=query(collection(db,"customers"), where("phoneKey","==",key));
-      const snap=await getDocs(q);
-      if(!snap.empty){
-        const data=snap.docs[0].data();
+      const snap=await getDoc(doc(db,"customers",key));
+      if(snap.exists()){
+        const data=snap.data();
         if(data.name) w.querySelector("#ln").value=data.name;
       }
     }catch(e){ console.warn(e) }
@@ -276,58 +340,143 @@ function viewLogin(){
     if(!n){alert("Please enter your name.");return}
     const key=phoneKey(p);
     try{
-      const q=query(collection(db,"customers"), where("phoneKey","==",key));
-      const snap=await getDocs(q);
-      if(snap.empty){
-        await addDoc(collection(db,"customers"), { name:n, phone:p, phoneKey:key, createdAt:serverTimestamp() });
+      const ref=doc(db,"customers",key);
+      const snap=await getDoc(ref);
+      if(!snap.exists()){
+        await setDoc(ref, { name:n, phone:p, phoneKey:key, balance:0, tokens:0, createdAt:serverTimestamp() });
       } else {
-        await updateDoc(doc(db,"customers", snap.docs[0].id), { name:n, phone:p, updatedAt:serverTimestamp() });
+        await updateDoc(ref, { name:n, phone:p, updatedAt:serverTimestamp() });
       }
     }catch(e){ console.warn("customer save failed", e) }
     state.user={ name:n, phone:p, key:key };
-    setSession(state.user); state.screen="home"; render();
+    setSession(state.user);
+    await loadWallet();
+    state.screen="home"; render();
   };
   w.querySelector("#al").onclick=()=>{ state.screen="adminLogin"; render() };
   return w;
 }
 
 function viewHome(){
+  const walletLine = `<div class="card">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <span class="wallet-badge">💵 Wallet: $${state.wallet.balance.toFixed(2)}</span>
+      <span class="token-badge">🎁 ${state.wallet.tokens} LS Tokens</span>
+    </div>
+  </div>`;
   const w=el(`<div>
     <div class="card"><h2>Hi ${esc(state.user.name)} 👋</h2><p>What would you like today?</p></div>
-    <div class="big-option" id="fo"><span class="emoji">🍽️</span><h3>Food</h3><p>Efendim · Grill & Go · Beit Misk</p></div>
+    ${walletLine}
+    <input class="search-bar" id="sq" placeholder="🔍 Search for an item…" value="${esc(state.search)}">
+    <div class="big-option" id="fo"><span class="emoji">🍽️</span><h3>Food</h3><p>Restaurants · Snacks · Pubs</p></div>
     <div class="big-option" id="go"><span class="emoji">🛒</span><h3>Grocery</h3><p>From La-Sobeh Grocery</p></div>
+    <div class="big-option" id="po"><span class="emoji">📦</span><h3>Send a Package</h3><p>Deliver from A → B, with photo</p></div>
+    <div class="big-option" id="bo"><span class="emoji">🏪</span><h3>Bring me something</h3><p>From any store, we pick it up</p></div>
+    <button class="btn btn-secondary btn-small" id="wo">💵 My Wallet & Tokens</button>
     <button class="btn btn-secondary btn-small" id="mo">📦 My Orders</button>
     <button class="btn btn-secondary btn-small" id="lo">Logout</button>
   </div>`);
-  w.querySelector("#fo").onclick=()=>{ state.category="food"; state.screen="foodList"; render() };
-  w.querySelector("#go").onclick=()=>{ state.category="grocery"; state.vendor=GROCERY; state.cart=[]; state.screen="vendor"; render() };
+  w.querySelector("#sq").oninput=(e)=>{
+    const q=e.target.value;
+    state.search=q;
+    if(q.length>=2){ state.screen="search"; render() }
+  };
+  w.querySelector("#fo").onclick=()=>{ state.deliveryType="food"; state.category="food"; state.screen="foodList"; render() };
+  w.querySelector("#go").onclick=()=>{ state.deliveryType="food"; state.category="grocery"; state.vendor=GROCERY; state.cart=[]; state.screen="vendor"; render() };
+  w.querySelector("#po").onclick=()=>{ state.deliveryType="package"; state.packageInfo={mode:"send"}; state.screen="package"; render() };
+  w.querySelector("#bo").onclick=()=>{ state.deliveryType="package"; state.packageInfo={mode:"bring"}; state.screen="package"; render() };
+  w.querySelector("#wo").onclick=()=>{ state.screen="wallet"; render() };
   w.querySelector("#mo").onclick=()=>{ state.screen="myOrders"; render() };
   w.querySelector("#lo").onclick=()=>{ state.user=null; setSession(null); state.screen="login"; render() };
+  return w;
+}
+
+function allItems(){
+  const out=[];
+  RESTAURANTS.forEach(r=>{
+    r.menu.forEach(item=>out.push({ ...item, vendor:r.name, vendorId:r.id, isGrocery:false }));
+  });
+  GROCERY.menu.forEach(item=>out.push({ ...item, vendor:GROCERY.name, vendorId:GROCERY.id, isGrocery:true }));
+  return out;
+}
+
+function viewSearch(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <input class="search-bar" id="sq" placeholder="🔍 Search for an item…" value="${esc(state.search)}">
+    <div id="res"></div>
+  </div>`);
+  const sq=w.querySelector("#sq");
+  sq.focus();
+  const paint=()=>{
+    const q=state.search.toLowerCase().trim();
+    const box=w.querySelector("#res"); box.innerHTML="";
+    if(q.length<1){ box.appendChild(el(`<div class="card center"><p>Type to search…</p></div>`)); return }
+    const results=allItems().filter(i=>i.name.toLowerCase().includes(q));
+    if(results.length===0){ box.appendChild(el(`<div class="card center"><p>No matches for "${esc(state.search)}".</p></div>`)); return }
+    results.forEach(item=>{
+      const imgTag=item.img
+        ? `<img class="thumb" src="${item.img}" onerror="this.style.display='none'">`
+        : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:30px;">🍽️</div>`;
+      const row=el(`<div class="menu-item">${imgTag}
+        <div class="info"><div class="name">${esc(item.name)}</div>
+          <div class="price">${money(item.priceLL,"LL")} · ${money(item.priceUSD,"USD")}</div>
+          <div class="from">from ${esc(item.vendor)}</div>
+        </div>
+        <button class="add-btn" data-id="${item.id}" data-vid="${item.vendorId}">+ Add</button>
+      </div>`);
+      row.querySelector("button").onclick=()=>{
+        const existing=state.cart.find(c=>c.id===item.id);
+        if(existing){ existing.qty++ } else {
+          state.cart.push({ id:item.id, name:item.name, priceLL:item.priceLL, priceUSD:item.priceUSD, qty:1 });
+        }
+        renderCartBar();
+        alert("Added to cart: "+item.name);
+      };
+      box.appendChild(row);
+    });
+  };
+  sq.oninput=(e)=>{ state.search=e.target.value; paint() };
+  paint();
+  w.querySelector("#b").onclick=()=>{ state.search=""; state.screen="home"; render() };
   return w;
 }
 
 function viewFoodList(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>Choose a restaurant</h2><p>${RESTAURANTS.length} restaurants available now.</p></div>
+    <div class="cat-bar" id="catbar"></div>
+    <div class="card"><h2>Choose a restaurant</h2></div>
     <div id="list"></div>
   </div>`);
+  const catbar=w.querySelector("#catbar");
+  CATEGORIES.forEach(c=>{
+    const btn=el(`<button>${c}</button>`);
+    if(state.activeCat===c) btn.classList.add("active");
+    btn.onclick=()=>{ state.activeCat=c; render() };
+    catbar.appendChild(btn);
+  });
   const list=w.querySelector("#list");
-  RESTAURANTS.forEach(r=>{
+  const filtered=RESTAURANTS.filter(r=>{
+    if(state.activeCat==="All") return true;
+    return r.menu.some(m=>m.cat===state.activeCat);
+  });
+  filtered.forEach(r=>{
+    const items = state.activeCat==="All" ? r.menu : r.menu.filter(m=>m.cat===state.activeCat);
     const c=el(`<div class="card">
       <div class="resto-row">
-        <img class="resto-logo" src="${r.logo}" alt="${esc(r.name)}" onerror="this.style.display='none'">
-        <div style="flex:1;">
-          <h2>${esc(r.name)}</h2>
-          <p>${esc(r.cuisine)} · 📍 ${esc(r.location)}</p>
-        </div>
+        <img class="resto-logo" src="${r.logo}" onerror="this.style.display='none'">
+        <div style="flex:1;"><h2>${esc(r.name)}</h2>
+          <p>${esc(r.cuisine)} · 📍 ${esc(r.location)}</p></div>
       </div>
+      <div class="small" style="margin-top:4px;">${items.length} item(s) in ${state.activeCat}</div>
       <button class="btn btn-small" style="margin-top:10px;">View Menu</button>
     </div>`);
     c.querySelector("button").onclick=()=>{ state.vendor=r; state.cart=[]; state.screen="vendor"; render() };
     list.appendChild(c);
   });
-  w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
+  if(filtered.length===0) list.appendChild(el(`<div class="card center"><p>No restaurants in this category.</p></div>`));
+  w.querySelector("#b").onclick=()=>{ state.screen="home"; state.activeCat="All"; render() };
   return w;
 }
 
@@ -336,7 +485,7 @@ function viewVendor(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
     <div class="card">
-      ${v.logo?`<div class="resto-row"><img class="resto-logo" src="${v.logo}" alt="" onerror="this.style.display='none'"><div style="flex:1;"><h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p></div></div>`
+      ${v.logo?`<div class="resto-row"><img class="resto-logo" src="${v.logo}" onerror="this.style.display='none'"><div style="flex:1;"><h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p></div></div>`
               :`<h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p>`}
       <a class="btn btn-secondary btn-small" style="margin-top:8px;" href="https://maps.google.com/?q=${encodeURIComponent(v.location+', Lebanon')}" target="_blank">🗺️ Open in Google Maps</a>
     </div>
@@ -344,12 +493,12 @@ function viewVendor(){
   </div>`);
   const menu=w.querySelector("#menu");
   v.menu.forEach(item=>{
-    const imgTag = item.img
-      ? `<img class="thumb" src="${item.img}" alt="" onerror="this.style.display='none'">`
+    const imgTag=item.img
+      ? `<img class="thumb" src="${item.img}" onerror="this.style.display='none'">`
       : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:30px;">🍽️</div>`;
-    const row=el(`<div class="menu-item">
-      ${imgTag}
-      <div class="info"><div class="name">${esc(item.name)}</div><div class="price">${money(item.price)}</div></div>
+    const row=el(`<div class="menu-item">${imgTag}
+      <div class="info"><div class="name">${esc(item.name)}</div>
+        <div class="price">${money(item.priceLL,"LL")} · ${money(item.priceUSD,"USD")}</div></div>
       <div class="qty"></div>
     </div>`);
     menu.appendChild(row);
@@ -364,7 +513,7 @@ function paintQty(item, holder){
   const inCart = state.cart.find(c=>c.id===item.id);
   if(!inCart){
     const btn=el(`<button class="add-btn">+ Add</button>`);
-    btn.onclick=()=>{ state.cart.push({id:item.id,name:item.name,price:item.price,qty:1}); paintQty(item,holder); renderCartBar() };
+    btn.onclick=()=>{ state.cart.push({ id:item.id, name:item.name, priceLL:item.priceLL, priceUSD:item.priceUSD, qty:1 }); paintQty(item,holder); renderCartBar() };
     holder.appendChild(btn);
   } else {
     const ctrl=el(`<div class="qty-control"><button>-</button><span>${inCart.qty}</span><button>+</button></div>`);
@@ -375,62 +524,112 @@ function paintQty(item, holder){
   }
 }
 
+function cartWithCurrency(){
+  return state.cart.map(c=>({
+    id:c.id, name:c.name, qty:c.qty,
+    price: state.currency==="USD" ? c.priceUSD : c.priceLL
+  }));
+}
+
 function renderCartBar(){
   const old=document.getElementById("cartbar"); if(old) old.remove();
   if(cartCount()===0) return;
-  const bar=el(`<div class="cart-bar" id="cartbar"><div><div class="count">${cartCount()} item(s)</div><div class="total">${money(cartTotal())}</div></div><div>Checkout →</div></div>`);
+  const total=state.cart.reduce((s,i)=>s+(state.currency==="USD"?i.priceUSD:i.priceLL)*i.qty,0);
+  const bar=el(`<div class="cart-bar" id="cartbar"><div><div class="count">${cartCount()} item(s)</div><div class="total">${money(total, state.currency)}</div></div><div>Checkout →</div></div>`);
   bar.onclick=()=>{ state.screen="checkout"; render() };
   document.body.appendChild(bar);
 }
 
 function viewCheckout(){
-  if(cartCount()===0){ state.screen="vendor"; render(); return el(`<div></div>`) }
+  if(cartCount()===0){ state.screen="home"; render(); return el(`<div></div>`) }
+  const subtotal=state.cart.reduce((s,i)=>s+(state.currency==="USD"?i.priceUSD:i.priceLL)*i.qty,0);
+  const fee=zoneFee();
+  const total=subtotal+fee;
+  const canFreeDeliver = state.wallet.tokens>=20;
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>Your Order</h2><div id="items"></div>
-      <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(cartTotal())}</span></div>
-      <div class="order-line"><span>Delivery Fee</span><span id="fee">${state.zone?money(zoneFee()):"—"}</span></div>
-      <div class="order-total"><span>Total</span><span id="grand">${money(grandTotal())}</span></div>
+
+    <div class="card"><h2>Currency</h2>
+      <div class="payment-grid" id="cg">
+        <button data-c="LL"${state.currency==="LL"?' class="selected"':""}>🇱🇧 L.L.</button>
+        <button data-c="USD"${state.currency==="USD"?' class="selected"':""}>💵 USD</button>
+      </div>
     </div>
+
+    <div class="card"><h2>Your Order</h2><div id="items"></div>
+      <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(subtotal,state.currency)}</span></div>
+      <div class="order-line"><span>Delivery Fee ${state.zone?"("+state.zone+")":""}</span><span id="fee">${state.zone?money(fee,state.currency):"—"}</span></div>
+      ${canFreeDeliver?`<div class="order-line"><label><input type="checkbox" id="freeDel"> Use 20 tokens for free delivery</label></div>`:""}
+      <div class="order-total"><span>Total</span><span id="grand">${money(total,state.currency)}</span></div>
+    </div>
+
     <div class="card"><h2>Delivery Details</h2>
       <div class="input-group"><label>Full Name</label><input id="n" value="${esc(state.user.name)}"></div>
       <div class="input-group"><label>Phone</label><input id="p" value="${esc(state.user.phone)}"></div>
       <div class="input-group"><label>Choose your zone</label><div class="zone-grid" id="zg"></div></div>
       <div class="input-group"><label>Address & Delivery Note</label>
-        <textarea id="a" placeholder="Building name, floor, house number, landmarks... and any note for the driver"></textarea></div>
-      <p class="small">Include building name, house number, or a landmark so we can find you faster. Driver will call before arriving.</p>
+        <textarea id="a" placeholder="Building name, floor, house number, landmarks..."></textarea></div>
     </div>
-    <div class="card"><h2>Payment</h2>
+
+    <div class="card"><h2>Payment Method</h2>
       <div class="payment-grid" id="pg">
-        <button data-p="cod">💵 Cash on Delivery</button>
-        <button data-p="whish">📱 Whish Money</button>
+        <button data-p="cod"${state.payment==="cod"?' class="selected"':""}>💵 Cash on Delivery</button>
+        <button data-p="whish"${state.payment==="whish"?' class="selected"':""}>📱 Whish Money</button>
+        <button data-p="wallet"${state.payment==="wallet"?' class="selected"':""}>💰 Pay from Wallet</button>
       </div>
-      <p class="small" style="margin-top:10px;">Whish number to send to: <b>${WHISH_NUMBER}</b>. Send the amount, then place the order. Driver will verify.</p>
+      <p class="small" style="margin-top:10px;">Whish: <b>${WHISH_NUMBER}</b> · Wallet balance: <b>$${state.wallet.balance.toFixed(2)}</b></p>
     </div>
+
     <button class="btn" id="place">Place Order</button>
   </div>`);
+
   const itemsBox=w.querySelector("#items");
   state.cart.forEach(c=>{
-    itemsBox.appendChild(el(`<div class="order-line"><span>${c.qty}× ${esc(c.name)}</span><span>${money(c.price*c.qty)}</span></div>`));
+    const price=state.currency==="USD"?c.priceUSD:c.priceLL;
+    itemsBox.appendChild(el(`<div class="order-line"><span>${c.qty}× ${esc(c.name)}</span><span>${money(price*c.qty,state.currency)}</span></div>`));
   });
+
   const zg=w.querySelector("#zg");
   ZONES.forEach(z=>{
     const btn=el(`<button>${z.name}</button>`);
     if(state.zone===z.name) btn.classList.add("selected");
-    btn.onclick=()=>{ state.zone=z.name;
+    btn.onclick=()=>{
+      state.zone=z.name;
       zg.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
       btn.classList.add("selected");
-      w.querySelector("#fee").textContent = money(zoneFee());
-      w.querySelector("#grand").textContent = money(grandTotal());
+      recalc();
     };
     zg.appendChild(btn);
   });
+
+  function recalc(){
+    const st=state.cart.reduce((s,i)=>s+(state.currency==="USD"?i.priceUSD:i.priceLL)*i.qty,0);
+    const f=zoneFee();
+    const fd=w.querySelector("#freeDel");
+    const freeDel = fd && fd.checked;
+    const t = st + (freeDel?0:f);
+    w.querySelector("#fee").textContent = state.zone ? (freeDel?"FREE":money(f,state.currency)) : "—";
+    w.querySelector("#grand").textContent = money(t, state.currency);
+  }
+  const fd=w.querySelector("#freeDel"); if(fd) fd.onchange=recalc;
+
+  const cg=w.querySelector("#cg");
+  cg.querySelectorAll("button").forEach(btn=>{
+    btn.onclick=()=>{ state.currency=btn.dataset.c; render() };
+  });
+
   const pg=w.querySelector("#pg");
   pg.querySelectorAll("button").forEach(btn=>{
-    if(state.payment===btn.dataset.p) btn.classList.add("selected");
-    btn.onclick=()=>{ state.payment=btn.dataset.p; pg.querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected") };
+    btn.onclick=()=>{
+      if(btn.dataset.p==="wallet" && state.wallet.balance<1){ alert("Your wallet is empty. Please top up first."); return }
+      state.payment=btn.dataset.p;
+      pg.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+      btn.classList.add("selected");
+    };
   });
-  w.querySelector("#b").onclick=()=>{ state.screen="vendor"; render() };
+
+  w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
+
   w.querySelector("#place").onclick=async ()=>{
     const n=w.querySelector("#n").value.trim();
     const p=w.querySelector("#p").value.trim();
@@ -440,29 +639,192 @@ function viewCheckout(){
     if(!a){alert("Please add your address / delivery note.");return}
     if(!state.payment){alert("Please choose a payment method.");return}
 
-    w.querySelector("#place").textContent = "Placing order...";
-    w.querySelector("#place").disabled = true;
+    w.querySelector("#place").textContent="Placing order…";
+    w.querySelector("#place").disabled=true;
+
+    const freeDel = w.querySelector("#freeDel") && w.querySelector("#freeDel").checked;
+    const st=state.cart.reduce((s,i)=>s+(state.currency==="USD"?i.priceUSD:i.priceLL)*i.qty,0);
+    const f=zoneFee();
+    const total= st + (freeDel?0:f);
 
     const orderData={
       userKey:state.user.key, name:n, phone:p, address:a,
       zone:state.zone, payment:state.payment,
-      vendor:state.vendor.name,
-      items:state.cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),
-      subtotal:cartTotal(), deliveryFee:zoneFee(), total:grandTotal(),
-      status:"preparing",
+      vendor:state.vendor ? state.vendor.name : "Package delivery",
+      type: state.deliveryType,
+      items: cartWithCurrency(),
+      currency:state.currency,
+      subtotal:st, deliveryFee:freeDel?0:f, deliveryFeeRaw:f, freeDelivery:freeDel,
+      total:total,
+      status:"pending",
       driver:DRIVER_NAME, driverPhone:DRIVER_PHONE,
       createdAt:serverTimestamp()
     };
+
+    if(state.deliveryType==="package" && state.packageInfo){
+      orderData.packageInfo = {
+        mode: state.packageInfo.mode,
+        fromAddress: state.packageInfo.fromAddress,
+        toAddress: state.packageInfo.toAddress,
+        storeName: state.packageInfo.storeName,
+        description: state.packageInfo.description,
+        photoName: state.packageInfo.photoName || "",
+        photoUrl: state.packageInfo.photoUrl || ""
+      };
+    }
+
     try{
       const ref=await addDoc(collection(db,"orders"), orderData);
+      if(state.payment==="wallet"){
+        const newBalance = state.wallet.balance - total;
+        if(newBalance<0){ alert("Wallet insufficient."); w.querySelector("#place").textContent="Place Order"; w.querySelector("#place").disabled=false; return }
+        await updateDoc(doc(db,"customers",state.user.key), { balance:newBalance });
+      }
+      let newTokens = state.wallet.tokens;
+      if(freeDel){ newTokens = newTokens - 20 }
+      if(state.currency==="USD" && total>=100){ newTokens = newTokens + 20 }
+      if(state.currency==="LL" && (total/USD_RATE)>=100){ newTokens = newTokens + 20 }
+      if(newTokens!==state.wallet.tokens){
+        await updateDoc(doc(db,"customers",state.user.key), { tokens:newTokens });
+      }
+      await loadWallet();
+
       const order={ ...orderData, id:"LS-"+ref.id.slice(-6).toUpperCase(), docId:ref.id, createdAt:new Date().toISOString() };
-      state.currentOrder=order; state.cart=[];
+      state.currentOrder=order; state.cart=[]; state.deliveryType="food"; state.packageInfo=null;
       const cb=document.getElementById("cartbar"); if(cb) cb.remove();
       state.screen="confirm"; render();
     }catch(e){
       alert("Failed to place order: "+e.message);
-      w.querySelector("#place").textContent = "Place Order";
-      w.querySelector("#place").disabled = false;
+      w.querySelector("#place").textContent="Place Order";
+      w.querySelector("#place").disabled=false;
+    }
+  };
+  return w;
+}
+
+function viewPackage(){
+  const mode = state.packageInfo.mode;
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>${mode==="send"?"📦 Send a Package":"🏪 Bring me something"}</h2>
+      <p>${mode==="send"?"We pick up from your location and deliver to the receiver.":"We pick up from a store and bring it to you."}</p>
+    </div>
+    <div class="card">
+      <div class="input-group"><label>Your Name</label><input id="pn" value="${esc(state.user.name)}"></div>
+      <div class="input-group"><label>Your Phone</label><input id="pp" value="${esc(state.user.phone)}"></div>
+      ${mode==="send"?`
+        <div class="input-group"><label>Pickup Address (from)</label><textarea id="from" placeholder="Where should we pick it up?"></textarea></div>
+        <div class="input-group"><label>Drop-off Address (to)</label><textarea id="to" placeholder="Where should we deliver it?"></textarea></div>
+      `:`
+        <div class="input-group"><label>Store name & location</label><input id="store" placeholder="e.g. XYZ Pharmacy, Main Street"></div>
+        <div class="input-group"><label>What to bring</label><textarea id="desc" placeholder="Describe what you need us to pick up and bring you"></textarea></div>
+      `}
+      <div class="input-group"><label>Notes (optional)</label><textarea id="notes" placeholder="Any note for the driver"></textarea></div>
+      <div class="input-group"><label>Photo of the package ${mode==="send"?"(required)":"(optional)"}</label>
+        <input id="ph" type="file" accept="image/*">
+        <img id="preview" class="photo-preview" style="display:none;">
+      </div>
+    </div>
+    <div class="card"><h2>Zone & Fee</h2>
+      <div class="zone-grid" id="zg"></div>
+      <p class="small" style="margin-top:8px;">Delivery fee same as normal orders.</p>
+    </div>
+    <div class="card"><h2>Payment</h2>
+      <div class="payment-grid" id="pg">
+        <button data-p="cod"${state.payment==="cod"?' class="selected"':""}>💵 Cash on Delivery</button>
+        <button data-p="whish"${state.payment==="whish"?' class="selected"':""}>📱 Whish Money</button>
+        <button data-p="wallet"${state.payment==="wallet"?' class="selected"':""}>💰 Pay from Wallet</button>
+      </div>
+    </div>
+    <button class="btn" id="submit">Submit Request</button>
+  </div>`);
+
+  const zg=w.querySelector("#zg");
+  ZONES.forEach(z=>{
+    const btn=el(`<button>${z.name}</button>`);
+    if(state.zone===z.name) btn.classList.add("selected");
+    btn.onclick=()=>{ state.zone=z.name; zg.querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected") };
+    zg.appendChild(btn);
+  });
+
+  const pg=w.querySelector("#pg");
+  pg.querySelectorAll("button").forEach(btn=>{
+    btn.onclick=()=>{ state.payment=btn.dataset.p; pg.querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected") };
+  });
+
+  const ph=w.querySelector("#ph");
+  const preview=w.querySelector("#preview");
+  let photoDataUrl="";
+  ph.onchange=()=>{
+    const file=ph.files[0]; if(!file) return;
+    const r=new FileReader();
+    r.onload=e=>{ photoDataUrl=e.target.result; preview.src=photoDataUrl; preview.style.display="block"; };
+    r.readAsDataURL(file);
+  };
+
+  w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
+  w.querySelector("#submit").onclick=async ()=>{
+    const n=w.querySelector("#pn").value.trim();
+    const p=w.querySelector("#pp").value.trim();
+    if(!n||!p){alert("Please enter name and phone.");return}
+    if(!state.zone){alert("Please choose your zone.");return}
+    if(!state.payment){alert("Please choose payment.");return}
+
+    let info={ mode };
+    if(mode==="send"){
+      const from=w.querySelector("#from").value.trim();
+      const to=w.querySelector("#to").value.trim();
+      if(!from||!to){alert("Please enter pickup and drop-off addresses.");return}
+      if(!photoDataUrl){alert("Please add a photo of the package.");return}
+      info.fromAddress=from; info.toAddress=to; info.description=w.querySelector("#notes").value.trim();
+    } else {
+      const store=w.querySelector("#store").value.trim();
+      const desc=w.querySelector("#desc").value.trim();
+      if(!store||!desc){alert("Please enter the store and what to bring.");return}
+      info.storeName=store; info.description=desc; info.toAddress=w.querySelector("#notes").value.trim();
+    }
+    info.photoUrl=photoDataUrl.slice(0, 200000);
+
+    state.packageInfo=info;
+    state.vendor=null;
+    state.deliveryType="package";
+
+    // fee
+    const f=zoneFee();
+    const st=0;
+    const total=f;
+
+    const orderData={
+      userKey:state.user.key, name:n, phone:p,
+      address: mode==="send" ? info.toAddress : info.toAddress,
+      zone:state.zone, payment:state.payment,
+      vendor: mode==="send" ? "Package Delivery" : "Errand — "+info.storeName,
+      type:"package",
+      items: [],
+      currency:state.currency,
+      subtotal:0, deliveryFee:f, deliveryFeeRaw:f, freeDelivery:false,
+      total:total,
+      status:"pending",
+      driver:DRIVER_NAME, driverPhone:DRIVER_PHONE,
+      packageInfo: info,
+      createdAt:serverTimestamp()
+    };
+
+    try{
+      w.querySelector("#submit").textContent="Submitting…";
+      const ref=await addDoc(collection(db,"orders"), orderData);
+      if(state.payment==="wallet"){
+        const newBalance = state.wallet.balance - total;
+        if(newBalance<0){ alert("Wallet insufficient."); w.querySelector("#submit").textContent="Submit Request"; return }
+        await updateDoc(doc(db,"customers",state.user.key), { balance:newBalance });
+        await loadWallet();
+      }
+      const order={ ...orderData, id:"LS-"+ref.id.slice(-6).toUpperCase(), docId:ref.id, createdAt:new Date().toISOString() };
+      state.currentOrder=order; state.packageInfo=null; state.deliveryType="food";
+      state.screen="confirm"; render();
+    }catch(e){
+      alert("Failed: "+e.message);
+      w.querySelector("#submit").textContent="Submit Request";
     }
   };
   return w;
@@ -470,28 +832,33 @@ function viewCheckout(){
 
 function viewConfirm(){
   const o=state.currentOrder;
+  const cur=o.currency||"LL";
   const w=el(`<div>
     <div class="card center"><span class="success-icon">✅</span>
       <h2>Order Placed!</h2>
       <p style="margin-top:6px;">Order ID: <b>${o.id}</b></p>
+      <p style="margin-top:4px;color:#c8102e;font-weight:700;">Waiting for admin approval…</p>
       <p class="small" style="margin-top:4px;">We've sent it to ${esc(o.vendor)}.</p>
     </div>
-    <div class="card"><h2>Driver Assigned</h2>
+    <div class="card"><h2>Driver Assigned (once accepted)</h2>
       <p style="margin-top:6px;">👤 <b>${esc(o.driver)}</b> will deliver your order.</p>
       <a class="btn" style="margin-top:12px;" href="tel:${o.driverPhone}">📞 Call ${esc(o.driver)}</a>
-      <p class="small" style="margin-top:8px;">📱 Chat with driver: coming soon (during active order only).</p>
     </div>
     <div class="card"><h2>Order Summary</h2><div id="s"></div>
-      <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal)}</span></div>
-      <div class="order-line"><span>Delivery Fee</span><span>${money(o.deliveryFee)}</span></div>
-      <div class="order-total"><span>Total</span><span>${money(o.total)}</span></div>
-      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"💵 Cash on Delivery":"📱 Whish Money"} · Zone: ${esc(o.zone)}</p>
+      <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal,cur)}</span></div>
+      <div class="order-line"><span>Delivery Fee</span><span>${o.freeDelivery?"FREE":money(o.deliveryFee,cur)}</span></div>
+      <div class="order-total"><span>Total</span><span>${money(o.total,cur)}</span></div>
+      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"💵 Cash on Delivery":o.payment==="whish"?"📱 Whish Money":"💰 Wallet"} · Zone: ${esc(o.zone)}</p>
     </div>
     <button class="btn" id="track">Track Order</button>
     <button class="btn btn-secondary btn-small" id="home">Back to Home</button>
   </div>`);
   const s=w.querySelector("#s");
-  o.items.forEach(i=>s.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty)}</span></div>`)));
+  if(o.items && o.items.length){
+    o.items.forEach(i=>s.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty,cur)}</span></div>`)));
+  } else if(o.packageInfo){
+    s.appendChild(el(`<div class="order-line"><span>${o.packageInfo.mode==="send"?"📦 Package delivery":"🏪 Errand"}</span><span></span></div>`));
+  }
   w.querySelector("#track").onclick=()=>{ state.screen="track"; render() };
   w.querySelector("#home").onclick=()=>{ state.screen="home"; render() };
   return w;
@@ -499,13 +866,13 @@ function viewConfirm(){
 
 function viewTrack(){
   const o=state.currentOrder;
+  const cur=o.currency||"LL";
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
     <div class="card"><h2>Order ${o.id}</h2>
       <p style="margin-top:6px;">Status: <span class="pill ${o.status}" id="liveStatus">${statusLabel(o.status)}</span></p>
       <p style="margin-top:6px;">Driver: <b>${esc(o.driver)}</b></p>
       <a class="btn" style="margin-top:10px;" href="tel:${o.driverPhone}">📞 Call Driver</a>
-      <p class="small" style="margin-top:8px;">Status updates live as the driver progresses.</p>
     </div>
     <div class="card"><h2>🗺️ Map</h2>
       <p>Live driver location will appear here (next step).</p>
@@ -521,7 +888,7 @@ function viewTrack(){
         const pill=w.querySelector("#liveStatus");
         if(pill){ pill.className="pill "+data.status; pill.textContent=statusLabel(data.status); }
       });
-      setTimeout(()=>{ try{unsub()}catch(e){} }, 120000);
+      setTimeout(()=>{ try{unsub()}catch(e){} }, 300000);
     }catch(e){ console.warn(e) }
   }
   return w;
@@ -535,7 +902,6 @@ function viewMyOrders(){
   </div>`);
   const list=w.querySelector("#list");
   w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
-
   (async ()=>{
     try{
       const q=query(collection(db,"orders"), where("userKey","==",state.user.key));
@@ -547,7 +913,7 @@ function viewMyOrders(){
       orders.forEach(o=>{
         const c=el(`<div class="order-card"><div class="top"><span class="id">${o.id}</span><span class="pill ${o.status}">${statusLabel(o.status)}</span></div>
           <div class="name">${esc(o.vendor)}</div>
-          <div class="meta">${money(o.total)}</div></div>`);
+          <div class="meta">${money(o.total,o.currency||"LL")}</div></div>`);
         c.onclick=()=>{ state.currentOrder=o; state.screen="track"; render() };
         list.appendChild(c);
       });
@@ -556,6 +922,80 @@ function viewMyOrders(){
       list.appendChild(el(`<div class="card center"><p>Could not load orders: ${esc(e.message)}</p></div>`));
     }
   })();
+  return w;
+}
+
+function viewWallet(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>💵 My Wallet</h2>
+      <p style="margin-top:10px;font-size:22px;font-weight:700;">$${state.wallet.balance.toFixed(2)}</p>
+      <p class="small">Balance is in USD. When you pay from wallet, we convert automatically.</p>
+    </div>
+    <div class="card"><h2>🎁 Loyalty Tokens</h2>
+      <p style="margin-top:10px;font-size:22px;font-weight:700;">${state.wallet.tokens} LS</p>
+      <p class="small">Every $100+ order earns you 20 LS Tokens. Every 20 tokens = 1 free delivery (any zone).</p>
+    </div>
+    <button class="btn" id="tu">Top up Wallet</button>
+    <button class="btn btn-secondary btn-small" id="mo">My Orders</button>
+  </div>`);
+  w.querySelector("#tu").onclick=()=>{ state.screen="topup"; render() };
+  w.querySelector("#mo").onclick=()=>{ state.screen="myOrders"; render() };
+  w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
+  return w;
+}
+
+function viewTopUp(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>Top Up Wallet</h2>
+      <p>Minimum top-up: $10.</p>
+      <div class="input-group"><label>Amount (USD)</label><input id="amt" type="number" min="10" step="1" placeholder="10"></div>
+      <div class="input-group"><label>Method</label>
+        <div class="payment-grid" id="mg">
+          <button data-m="whish" class="selected">📱 Whish Money</button>
+          <button data-m="visa">💳 Visa (Coming soon)</button>
+        </div>
+      </div>
+      <div id="howto"></div>
+      <button class="btn" id="send">Request Top-Up</button>
+      <p class="small" style="margin-top:10px;">After you send the money, admin will credit your wallet. You'll see it here.</p>
+    </div>
+  </div>`);
+  let method="whish";
+  const howto=w.querySelector("#howto");
+  const paintHow=()=>{
+    if(method==="whish"){
+      howto.innerHTML=`<div class="card" style="background:#fff8f9;">
+        <h2 style="color:#c8102e;">Send by Whish</h2>
+        <p style="margin-top:8px;">1. Open Whish Money app.<br>2. Send the amount to <b>${WHISH_NUMBER}</b>.<br>3. Tap "Request Top-Up" below.</p>
+        <a class="btn btn-small" style="margin-top:8px;" href="https://wa.me/961${WHATSAPP_NUMBER.replace(/^0+/,"")}?text=Hi%20La-Sobeh%2C%20I%20want%20to%20top%20up%20my%20wallet" target="_blank">📲 Message on WhatsApp</a>
+      </div>`;
+    } else {
+      howto.innerHTML=`<div class="card" style="background:#f5f5f7;">
+        <h2>Visa / Card</h2>
+        <p style="margin-top:8px;">Card payments are coming soon. For now, please contact the holder on WhatsApp to pay by card or arrange another method.</p>
+        <a class="btn btn-small" style="margin-top:8px;" href="https://wa.me/961${WHATSAPP_NUMBER.replace(/^0+/,"")}?text=Hi%20La-Sobeh%2C%20I%20want%20to%20pay%20by%20card" target="_blank">📲 Contact on WhatsApp</a>
+      </div>`;
+    }
+  };
+  w.querySelector("#mg").querySelectorAll("button").forEach(btn=>{
+    btn.onclick=()=>{ method=btn.dataset.m; w.querySelector("#mg").querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected"); paintHow() };
+  });
+  paintHow();
+  w.querySelector("#b").onclick=()=>{ state.screen="wallet"; render() };
+  w.querySelector("#send").onclick=async ()=>{
+    const amt=parseFloat(w.querySelector("#amt").value);
+    if(!amt || amt<10){alert("Minimum top-up is $10.");return}
+    try{
+      await addDoc(collection(db,"topups"), {
+        userKey:state.user.key, name:state.user.name, phone:state.user.phone,
+        amount:amt, method:method, status:"pending", createdAt:serverTimestamp()
+      });
+      alert("Request sent. Admin will credit your wallet after confirming receipt.");
+      state.screen="wallet"; render();
+    }catch(e){ alert("Failed: "+e.message) }
+  };
   return w;
 }
 
@@ -581,13 +1021,20 @@ function viewAdmin(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Exit Admin</button>
     <div class="card"><h2>🔐 Admin — Live Orders</h2>
-      <p class="small">Orders update in real-time from any device. New orders appear automatically.</p>
+      <p class="small">New pending orders have a red bar. Tap "Accept" or "Reject".</p>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary btn-small" style="flex:1;" id="aw">Wallets</button>
+        <button class="btn btn-secondary btn-small" style="flex:1;" id="as">Totals</button>
+      </div>
     </div>
     <div id="list"><div class="loading">Loading orders…</div></div>
   </div>`);
   const list=w.querySelector("#list");
   w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
-
+  w.querySelector("#aw").onclick=()=>{ state.screen="adminWallet"; render() };
+  w.querySelector("#as").onclick=()=>{ state.screen="adminStats"; render() };
   try{
     const q=query(collection(db,"orders"), orderBy("createdAt","desc"));
     const unsub=onSnapshot(q, (snap)=>{
@@ -595,15 +1042,25 @@ function viewAdmin(){
       if(snap.empty){ list.appendChild(el(`<div class="card center"><p>No orders yet.</p></div>`)); return }
       snap.forEach(d=>{
         const o={ ...d.data(), docId:d.id, id:"LS-"+d.id.slice(-6).toUpperCase() };
-        const c=el(`<div class="order-card"><div class="top"><span class="id">${o.id}</span><span class="pill ${o.status}">${statusLabel(o.status)}</span></div>
+        const cls = o.status==="pending" ? "order-card pending-highlight" : "order-card";
+        const c=el(`<div class="${cls}"><div class="top"><span class="id">${o.id}</span><span class="pill ${o.status}">${statusLabel(o.status)}</span></div>
           <div class="name">${esc(o.name)} — ${esc(o.vendor)}</div>
-          <div class="meta">${esc(o.zone)} · ${money(o.total)} · ${o.payment==="cod"?"COD":"Whish"}</div></div>`);
+          <div class="meta">${esc(o.zone)} · ${money(o.total,o.currency||"LL")} · ${o.payment==="cod"?"COD":o.payment==="whish"?"Whish":"Wallet"}</div>
+          ${o.status==="pending"?`<div style="display:flex;gap:8px;margin-top:10px;">
+            <button class="btn btn-small" style="flex:1;background:#28a745;" data-act="accept">✓ Accept</button>
+            <button class="btn btn-small" style="flex:1;background:#dc3545;" data-act="reject">✗ Reject</button>
+          </div>`:""}
+        </div>`);
+        const ac=c.querySelector('[data-act="accept"]');
+        const rj=c.querySelector('[data-act="reject"]');
+        if(ac) ac.onclick=async (ev)=>{ ev.stopPropagation(); await updateDoc(doc(db,"orders",o.docId), { status:"accepted" }) };
+        if(rj) rj.onclick=async (ev)=>{ ev.stopPropagation(); await updateDoc(doc(db,"orders",o.docId), { status:"rejected" }) };
         c.onclick=()=>{ state.currentOrder=o; state.screen="adminOrder"; render() };
         list.appendChild(c);
       });
     }, (err)=>{
       list.innerHTML="";
-      list.appendChild(el(`<div class="card center"><p>Error loading orders: ${esc(err.message)}</p></div>`));
+      list.appendChild(el(`<div class="card center"><p>Error: ${esc(err.message)}</p></div>`));
     });
     state.unsub=unsub;
   }catch(e){
@@ -615,6 +1072,7 @@ function viewAdmin(){
 
 function viewAdminOrder(){
   const o=state.currentOrder;
+  const cur=o.currency||"LL";
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
     <div class="card"><h2>Order ${o.id}</h2>
@@ -624,23 +1082,37 @@ function viewAdminOrder(){
       <p style="margin-top:6px;">${esc(o.address)}</p>
       <a class="btn btn-small" style="margin-top:8px;" href="tel:${o.phone}">📞 Call Customer</a>
     </div>
+    ${o.packageInfo?`<div class="card"><h2>📦 Package Info</h2>
+      <p><b>${o.packageInfo.mode==="send"?"Send":"Bring"}</b></p>
+      ${o.packageInfo.fromAddress?`<p>From: ${esc(o.packageInfo.fromAddress)}</p>`:""}
+      ${o.packageInfo.toAddress?`<p>To: ${esc(o.packageInfo.toAddress)}</p>`:""}
+      ${o.packageInfo.storeName?`<p>Store: ${esc(o.packageInfo.storeName)}</p>`:""}
+      ${o.packageInfo.description?`<p>Notes: ${esc(o.packageInfo.description)}</p>`:""}
+      ${o.packageInfo.photoUrl?`<img class="photo-preview" src="${o.packageInfo.photoUrl}">`:""}
+    </div>`:""}
     <div class="card"><h2>Items</h2><div id="it"></div>
-      <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal)}</span></div>
-      <div class="order-line"><span>Delivery Fee</span><span>${money(o.deliveryFee)}</span></div>
-      <div class="order-total"><span>Total</span><span>${money(o.total)}</span></div>
-      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"💵 Cash on Delivery":"📱 Whish Money ("+WHISH_NUMBER+")"}</p>
+      <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal,cur)}</span></div>
+      <div class="order-line"><span>Delivery Fee</span><span>${o.freeDelivery?"FREE":money(o.deliveryFee,cur)}</span></div>
+      <div class="order-total"><span>Total</span><span>${money(o.total,cur)}</span></div>
+      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"COD":o.payment==="whish"?"Whish ("+WHISH_NUMBER+")":"Wallet"}</p>
     </div>
     <div class="card"><h2>Status</h2>
       <div class="payment-grid" id="st">
+        <button data-s="pending"${o.status==="pending"?' class="selected"':""}>Pending</button>
+        <button data-s="accepted"${o.status==="accepted"?' class="selected"':""}>Accepted</button>
         <button data-s="preparing"${o.status==="preparing"?' class="selected"':""}>Preparing</button>
         <button data-s="ontheway"${o.status==="ontheway"?' class="selected"':""}>On the way</button>
         <button data-s="delivered"${o.status==="delivered"?' class="selected"':""}>Delivered</button>
+        <button data-s="rejected"${o.status==="rejected"?' class="selected"':""}>Rejected</button>
       </div>
-      <p class="small" style="margin-top:8px;">Changes save to the cloud instantly. Customer sees them live.</p>
     </div>
   </div>`);
   const it=w.querySelector("#it");
-  o.items.forEach(i=>it.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty)}</span></div>`)));
+  if(o.items && o.items.length){
+    o.items.forEach(i=>it.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty,cur)}</span></div>`)));
+  } else {
+    it.appendChild(el(`<p class="small">No items (package delivery).</p>`));
+  }
   w.querySelector("#st").querySelectorAll("button").forEach(btn=>{
     btn.onclick=async ()=>{
       try{
@@ -654,9 +1126,114 @@ function viewAdminOrder(){
   return w;
 }
 
-(function init(){
+function viewAdminWallet(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>💰 Credit Customer Wallet</h2>
+      <p class="small">When a customer sends you money via Whish, credit their wallet here.</p>
+    </div>
+    <div class="card">
+      <div class="input-group"><label>Customer Phone</label><input id="cp" type="tel" placeholder="70 123 456"></div>
+      <button class="btn btn-secondary btn-small" id="look">Look Up</button>
+      <div id="found"></div>
+    </div>
+    <div id="pending"></div>
+  </div>`);
+  w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
+  const found=w.querySelector("#found");
+  let foundKey=null;
+  w.querySelector("#look").onclick=async ()=>{
+    const key=phoneKey(w.querySelector("#cp").value);
+    if(!key){return}
+    found.innerHTML="<p class='small'>Searching…</p>";
+    const snap=await getDoc(doc(db,"customers",key));
+    if(!snap.exists()){ found.innerHTML="<p class='small'>No customer found.</p>"; return }
+    foundKey=key;
+    const d=snap.data();
+    found.innerHTML=`<div class="card"><p><b>${esc(d.name)}</b></p>
+      <p class="small">Balance: $${(d.balance||0).toFixed(2)} · Tokens: ${d.tokens||0}</p>
+      <div class="input-group" style="margin-top:10px;"><label>Add to wallet (USD)</label><input id="amt" type="number" min="1" step="1"></div>
+      <div class="input-group"><label>Add tokens</label><input id="tk" type="number" min="0" step="1" value="0"></div>
+      <button class="btn" id="credit">Credit Wallet</button></div>`;
+    found.querySelector("#credit").onclick=async ()=>{
+      const amt=parseFloat(found.querySelector("#amt").value)||0;
+      const tk=parseInt(found.querySelector("#tk").value)||0;
+      const cur=await getDoc(doc(db,"customers",key));
+      const cd=cur.data();
+      await updateDoc(doc(db,"customers",key), { balance:(cd.balance||0)+amt, tokens:(cd.tokens||0)+tk });
+      alert("Credited.");
+      w.querySelector("#look").click();
+    };
+  };
+
+  // pending topups
+  (async ()=>{
+    const box=w.querySelector("#pending");
+    box.innerHTML="<h2 style='margin:12px 0 6px;font-size:15px;'>Pending Top-Up Requests</h2><div class='loading'>Loading…</div>";
+    const q=query(collection(db,"topups"), where("status","==","pending"));
+    const snap=await getDocs(q);
+    box.innerHTML="<h2 style='margin:12px 0 6px;font-size:15px;'>Pending Top-Up Requests</h2>";
+    if(snap.empty){ box.appendChild(el(`<p class='small'>No pending requests.</p>`)); return }
+    snap.forEach(d=>{
+      const t=d.data();
+      const card=el(`<div class="card"><p><b>${esc(t.name)}</b> — ${esc(t.phone)}</p>
+        <p class="small">Amount: $${t.amount} · Method: ${t.method}</p>
+        <button class="btn btn-small" style="margin-top:8px;">✓ Credit & Mark Done</button></div>`);
+      card.querySelector("button").onclick=async ()=>{
+        const key=phoneKey(t.phone);
+        const cur=await getDoc(doc(db,"customers",key));
+        if(cur.exists()){
+          const cd=cur.data();
+          await updateDoc(doc(db,"customers",key), { balance:(cd.balance||0)+t.amount });
+        }
+        await updateDoc(doc(db,"topups",d.id), { status:"done" });
+        alert("Credited $"+t.amount);
+        state.screen="adminWallet"; render();
+      };
+      box.appendChild(card);
+    });
+  })();
+  return w;
+}
+
+function viewAdminStats(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>📊 Totals</h2><div id="stats"><div class="loading">Loading…</div></div></div>
+  </div>`);
+  w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
+  (async ()=>{
+    const box=w.querySelector("#stats");
+    const q=query(collection(db,"orders"));
+    const snap=await getDocs(q);
+    let today=0, week=0, all=0, count=0;
+    const now=Date.now();
+    snap.forEach(d=>{
+      const o=d.data();
+      count++;
+      const totalUSD = o.currency==="USD" ? o.total : (o.total/USD_RATE);
+      const t = o.createdAt?.seconds ? o.createdAt.seconds*1000 : 0;
+      all += totalUSD;
+      if(now-t < 7*24*3600*1000) week+=totalUSD;
+      if(now-t < 24*3600*1000) today+=totalUSD;
+    });
+    box.innerHTML=`<p style="font-size:22px;font-weight:700;margin-top:8px;">Today: $${today.toFixed(2)}</p>
+      <p style="font-size:18px;font-weight:700;margin-top:8px;">This week: $${week.toFixed(2)}</p>
+      <p style="font-size:18px;font-weight:700;margin-top:8px;">All time: $${all.toFixed(2)}</p>
+      <p class="small" style="margin-top:8px;">${count} order(s) total. Equiv in L.L.: ${(all*USD_RATE).toLocaleString()} L.L.</p>`;
+  })();
+  return w;
+}
+
+(async function init(){
   const s=getSession();
-  if(s && s.key){ state.user=s; state.screen="home" } else { state.screen="login" }
+  if(s && s.key){ 
+    state.user=s; 
+    await loadWallet();
+    state.screen="home" 
+  } else { 
+    state.screen="login" 
+  }
   render();
 })();
 </script>
