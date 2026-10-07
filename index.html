@@ -166,12 +166,13 @@ let state = {
   search:"", activeCat:"All", currentOrder:null,
   wallet:{ balance:0, tokens:0 },
   deliveryType:"food", packageInfo:null,
-  adminOrders:[], driversCache:[]
+  unsub:null
 };
 
 const LSK = { session:"lasobeh_session_v5" };
 function setSession(s){ s?localStorage.setItem(LSK.session,JSON.stringify(s)):localStorage.removeItem(LSK.session) }
 function getSession(){ try{return JSON.parse(localStorage.getItem(LSK.session))}catch(e){return null} }
+function clearSession(){ localStorage.removeItem(LSK.session) }
 function money(n, cur){ return cur==="USD" ? "$"+n : n.toLocaleString()+" L.L"; }
 function el(html){ const d=document.createElement("div"); d.innerHTML=html.trim(); return d.firstChild }
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])) }
@@ -183,6 +184,8 @@ function statusLabel(s){
   return s==="pending"?"Pending approval":s==="accepted"?"Accepted":s==="preparing"?"Preparing":
          s==="ontheway"?"On the way":s==="delivered"?"Delivered":s==="rejected"?"Rejected":s;
 }
+function clearUnsub(){ if(state.unsub){ try{state.unsub()}catch(e){} state.unsub=null } }
+function goToLogin(){ clearUnsub(); state.role="customer"; state.user=null; state.driver=null; clearSession(); state.screen="login"; state.cart=[]; render(); }
 
 async function loadWallet(){
   if(!state.user) return;
@@ -204,7 +207,9 @@ function render(){
     adminWallet:viewAdminWallet, adminStats:viewAdminStats, adminDrivers:viewAdminDrivers,
     driverLogin:viewDriverLogin, driverHome:viewDriverHome, driverOrder:viewDriverOrder
   };
-  if(V[s]) app.appendChild(V[s]()); else app.appendChild(el(`<div class="card center"><p>Unknown screen: ${esc(s)}</p></div>`));
+  const fn=V[s];
+  if(fn){ try{ app.appendChild(fn()) }catch(e){ console.error(e); app.appendChild(el(`<div class="card center"><p>Error: ${esc(e.message)}</p><button class="btn" onclick="location.reload()">Reload</button></div>`)) } }
+  else { goToLogin(); return; }
   window.scrollTo(0,0);
 }
 
@@ -270,7 +275,7 @@ function viewHome(){
   w.querySelector("#bo").onclick=()=>{ state.deliveryType="package"; state.packageInfo={mode:"bring"}; state.screen="package"; render() };
   w.querySelector("#wo").onclick=()=>{ state.screen="wallet"; render() };
   w.querySelector("#mo").onclick=()=>{ state.screen="myOrders"; render() };
-  w.querySelector("#lo").onclick=()=>{ state.user=null; setSession(null); state.screen="login"; render() };
+  w.querySelector("#lo").onclick=()=>{ goToLogin() };
   return w;
 }
 
@@ -624,9 +629,6 @@ function viewConfirm(){
       <p style="margin-top:6px;">Order ID: <b>${o.id}</b></p>
       <p style="margin-top:4px;color:#c8102e;font-weight:700;">Waiting for admin approval…</p>
     </div>
-    <div class="card"><h2>Driver</h2>
-      <p class="small">Assigned by admin once accepted.</p>
-    </div>
     <div class="card"><h2>Summary</h2><div id="s"></div>
       <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal,cur)}</span></div>
       <div class="order-line"><span>Delivery Fee</span><span>${o.freeDelivery?"FREE":money(o.deliveryFee,cur)}</span></div>
@@ -657,23 +659,22 @@ function viewTrack(){
     const box=w.querySelector("#driverBox"); box.innerHTML="";
     if(data.driverName && data.driverPhone){
       box.appendChild(el(`<p style="margin-top:6px;">Driver: <b>${esc(data.driverName)}</b></p>`));
-      const a=el(`<a class="btn" style="margin-top:10px;" href="tel:${data.driverPhone}">📞 Call ${esc(data.driverName)}</a>`);
-      box.appendChild(a);
+      box.appendChild(el(`<a class="btn" style="margin-top:10px;" href="tel:${data.driverPhone}">📞 Call ${esc(data.driverName)}</a>`));
     } else {
       box.appendChild(el(`<p class="small">Driver will be assigned soon.</p>`));
     }
   };
   paintDriver(o);
-  w.querySelector("#b").onclick=()=>{ state.screen="confirm"; render() };
+  w.querySelector("#b").onclick=()=>{ clearUnsub(); state.screen="confirm"; render() };
   if(o.docId){
-    const unsub=onSnapshot(doc(db,"orders",o.docId), (snap)=>{
+    clearUnsub();
+    state.unsub=onSnapshot(doc(db,"orders",o.docId), (snap)=>{
       if(!snap.exists()) return;
       const d=snap.data();
       const pill=w.querySelector("#liveStatus");
       if(pill){ pill.className="pill "+d.status; pill.textContent=statusLabel(d.status); }
       paintDriver(d);
     });
-    setTimeout(()=>{ try{unsub()}catch(e){} }, 300000);
   }
   return w;
 }
@@ -741,7 +742,7 @@ function viewTopUp(){
   const paintHow=()=>{
     if(method==="whish"){
       howto.innerHTML=`<div class="card" style="background:#fff8f9;">
-        <p>Send <b>$amount</b> by Whish to <b>${WHISH_NUMBER}</b>, then tap Request.</p>
+        <p>Send the amount by Whish to <b>${WHISH_NUMBER}</b>, then tap Request.</p>
         <a class="btn btn-small" style="margin-top:8px;" href="https://wa.me/961${WHATSAPP_NUMBER.replace(/^0+/,"")}" target="_blank">📲 WhatsApp</a></div>`;
     } else {
       howto.innerHTML=`<div class="card" style="background:#f5f5f7;">
@@ -766,7 +767,7 @@ function viewTopUp(){
   return w;
 }
 
-/* ---------- DRIVER LOGIN + HOME ---------- */
+/* ---------- DRIVER ---------- */
 
 function viewDriverLogin(){
   const w=el(`<div>
@@ -779,7 +780,7 @@ function viewDriverLogin(){
       <button class="btn" id="db">Login</button>
     </div>
   </div>`);
-  w.querySelector("#b").onclick=()=>{ state.screen="login"; render() };
+  w.querySelector("#b").onclick=()=>{ goToLogin() };
   w.querySelector("#db").onclick=async ()=>{
     const p=w.querySelector("#dp").value.trim(), c=w.querySelector("#dc").value.trim();
     if(!p||!c){alert("Enter phone and PIN.");return}
@@ -809,10 +810,11 @@ function viewDriverHome(){
     <div id="list"><div class="loading">Loading…</div></div>
   </div>`);
   const list=w.querySelector("#list");
-  w.querySelector("#lo").onclick=()=>{ state.driver=null; state.role="customer"; setSession(null); state.screen="login"; render() };
+  w.querySelector("#lo").onclick=()=>{ goToLogin() };
   try{
+    clearUnsub();
     const q=query(collection(db,"orders"), where("driverId","==",state.driver.key));
-    const unsub=onSnapshot(q, (snap)=>{
+    state.unsub=onSnapshot(q, (snap)=>{
       list.innerHTML="";
       if(snap.empty){ list.appendChild(el(`<div class="card center"><p>No orders assigned to you.</p></div>`)); return }
       const arr=snap.docs.map(d=>({ ...d.data(), docId:d.id, id:"LS-"+d.id.slice(-6).toUpperCase() }));
@@ -826,7 +828,6 @@ function viewDriverHome(){
         list.appendChild(c);
       });
     }, (err)=>{ list.innerHTML=""; list.appendChild(el(`<div class="card center"><p>Error: ${esc(err.message)}</p></div>`)) });
-    state.unsub=unsub;
   }catch(e){ list.innerHTML=""; list.appendChild(el(`<div class="card center"><p>Error: ${esc(e.message)}</p></div>`)) }
   return w;
 }
@@ -854,7 +855,7 @@ function viewDriverOrder(){
     </div>`:""}
     <div class="card"><h2>Items</h2><div id="it"></div>
       <div class="order-line" style="margin-top:8px;"><span>Total to collect</span><span>${money(o.total,cur)}</span></div>
-      <p class="small">Payment method: ${o.payment==="cod"?"Cash on delivery":o.payment==="whish"?"Whish (already paid?)":"Wallet (already paid)"}</p>
+      <p class="small">Payment: ${o.payment==="cod"?"Cash on delivery":o.payment==="whish"?"Whish":"Wallet (prepaid)"}</p>
     </div>
     <div class="card"><h2>Actions</h2>
       ${o.status==="accepted"?`<button class="btn btn-green" id="acc">✓ Accept Order</button>
@@ -865,7 +866,7 @@ function viewDriverOrder(){
   </div>`);
   const it=w.querySelector("#it");
   if(o.items && o.items.length) o.items.forEach(i=>it.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty,cur)}</span></div>`)));
-  else it.appendChild(el(`<p class="small">No items (package).</p>`));
+  else it.appendChild(el(`<p class="small">No items.</p>`));
 
   const acc=w.querySelector("#acc"), dec=w.querySelector("#dec"), otw=w.querySelector("#otw"), del=w.querySelector("#del");
   if(acc) acc.onclick=async ()=>{ await updateDoc(doc(db,"orders",o.docId), { status:"preparing" }); state.currentOrder={ ...o, status:"preparing" }; render() };
@@ -898,13 +899,13 @@ function viewAdminLogin(){
     state.role="admin"; setSession({ role:"admin" });
     state.screen="admin"; render();
   };
-  w.querySelector("#b").onclick=()=>{ state.screen="login"; render() };
+  w.querySelector("#b").onclick=()=>{ goToLogin() };
   return w;
 }
 
 function viewAdmin(){
   const w=el(`<div>
-    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Exit</button>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Exit to Login</button>
     <div class="card"><h2>🔐 Admin — Live Orders</h2>
       <p class="small">Red = new pending. Tap to open, Accept/Reject + assign driver.</p>
     </div>
@@ -916,13 +917,14 @@ function viewAdmin(){
     <div id="list"><div class="loading">Loading…</div></div>
   </div>`);
   const list=w.querySelector("#list");
-  w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
+  w.querySelector("#b").onclick=()=>{ goToLogin() };
   w.querySelector("#aw").onclick=()=>{ state.screen="adminWallet"; render() };
   w.querySelector("#as").onclick=()=>{ state.screen="adminStats"; render() };
   w.querySelector("#ad").onclick=()=>{ state.screen="adminDrivers"; render() };
   try{
+    clearUnsub();
     const q=query(collection(db,"orders"), orderBy("createdAt","desc"));
-    const unsub=onSnapshot(q, (snap)=>{
+    state.unsub=onSnapshot(q, (snap)=>{
       list.innerHTML="";
       if(snap.empty){ list.appendChild(el(`<div class="card center"><p>No orders yet.</p></div>`)); return }
       snap.forEach(d=>{
@@ -935,7 +937,6 @@ function viewAdmin(){
         list.appendChild(c);
       });
     }, (err)=>{ list.innerHTML=""; list.appendChild(el(`<div class="card center"><p>Error: ${esc(err.message)}</p></div>`)) });
-    state.unsub=unsub;
   }catch(e){ list.innerHTML=""; list.appendChild(el(`<div class="card center"><p>Error: ${esc(e.message)}</p></div>`)) }
   return w;
 }
@@ -1020,6 +1021,7 @@ function viewAdminOrder(){
 function viewAdminDrivers(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <button class="btn btn-secondary btn-small" id="exit" style="margin-bottom:12px;">🚪 Exit to Login</button>
     <div class="card"><h2>🚗 Drivers</h2>
       <div class="input-group"><label>Name</label><input id="dn" placeholder="e.g. Mizo"></div>
       <div class="input-group"><label>Phone</label><input id="dp" type="tel" placeholder="03 033 331"></div>
@@ -1029,6 +1031,7 @@ function viewAdminDrivers(){
     <div id="list"><div class="loading">Loading…</div></div>
   </div>`);
   w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
+  w.querySelector("#exit").onclick=()=>{ goToLogin() };
   const list=w.querySelector("#list");
   const paint=async ()=>{
     const drivers=await loadDrivers();
@@ -1063,6 +1066,7 @@ function viewAdminDrivers(){
 function viewAdminWallet(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <button class="btn btn-secondary btn-small" id="exit" style="margin-bottom:12px;">🚪 Exit to Login</button>
     <div class="card"><h2>💰 Credit Customer</h2>
       <div class="input-group"><label>Phone</label><input id="cp" type="tel"></div>
       <button class="btn btn-secondary btn-small" id="look">Look Up</button>
@@ -1071,6 +1075,7 @@ function viewAdminWallet(){
     <div id="pending"></div>
   </div>`);
   w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
+  w.querySelector("#exit").onclick=()=>{ goToLogin() };
   const found=w.querySelector("#found");
   w.querySelector("#look").onclick=async ()=>{
     const key=phoneKey(w.querySelector("#cp").value);
@@ -1119,9 +1124,11 @@ function viewAdminWallet(){
 function viewAdminStats(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <button class="btn btn-secondary btn-small" id="exit" style="margin-bottom:12px;">🚪 Exit to Login</button>
     <div class="card"><h2>📊 Totals</h2><div id="stats"><div class="loading">Loading…</div></div></div>
   </div>`);
   w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
+  w.querySelector("#exit").onclick=()=>{ goToLogin() };
   (async ()=>{
     const box=w.querySelector("#stats");
     const snap=await getDocs(collection(db,"orders"));
