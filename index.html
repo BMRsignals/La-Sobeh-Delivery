@@ -1,1 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La-Sobeh Delivery</title>
+<meta name="theme-color" content="#c8102e">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f5f5f7; color: #1a1a1a; min-height: 100vh; padding-bottom: 90px;
+  }
+  header {
+    background: #c8102e; color: #fff; padding: 16px 18px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  header h1 { font-size: 20px; font-weight: 700; }
+  header p { font-size: 12px; opacity: .85; margin-top: 2px; }
+  .container { padding: 16px; max-width: 640px; margin: 0 auto; }
+  .card {
+    background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .card h2 { font-size: 17px; margin-bottom: 6px; }
+  .card p { font-size: 14px; color: #555; line-height: 1.5; }
+  .btn {
+    display: block; width: 100%; background: #c8102e; color: #fff;
+    border: none; padding: 14px; font-size: 16px; font-weight: 600;
+    border-radius: 12px; cursor: pointer; margin-top: 10px; text-align: center;
+  }
+  .btn:active { background: #a00d24; }
+  .btn-secondary { background: #fff; color: #c8102e; border: 2px solid #c8102e; }
+  .btn-secondary:active { background: #ffe5e9; }
+  .btn-small { padding: 10px; font-size: 14px; }
+  .big-option {
+    background: #fff; border-radius: 14px; padding: 24px; margin-bottom: 12px;
+    text-align: center; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .big-option:active { background: #fafafa; }
+  .big-option .emoji { font-size: 44px; display: block; margin-bottom: 8px; }
+  .big-option h3 { font-size: 20px; margin-bottom: 4px; }
+  .big-option p { font-size: 13px; color: #777; }
+  .input-group { margin-bottom: 14px; }
+  .input-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #333; }
+  .input-group input, .input-group textarea, .input-group select {
+    width: 100%; padding: 12px; font-size: 15px;
+    border: 1px solid #ddd; border-radius: 10px; background: #fff; font-family: inherit;
+  }
+  .input-group textarea { min-height: 80px; resize: vertical; }
+  .menu-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; border-bottom: 1px solid #eee;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item .name { font-size: 15px; font-weight: 600; }
+  .menu-item .price { font-size: 13px; color: #c8102e; font-weight: 600; margin-top: 2px; }
+  .add-btn {
+    background: #c8102e; color: #fff; border: none; padding: 8px 16px;
+    border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .qty-control { display: flex; align-items: center; gap: 10px; }
+  .qty-control button {
+    width: 32px; height: 32px; border-radius: 50%; border: none;
+    background: #c8102e; color: #fff; font-size: 18px; font-weight: 700; cursor: pointer;
+  }
+  .qty-control span { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; }
+  .cart-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; color: #fff;
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.2); cursor: pointer;
+  }
+  .cart-bar .count { font-size: 14px; }
+  .cart-bar .total { font-size: 16px; font-weight: 700; }
+  .pill {
+    display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 600;
+    border-radius: 20px; background: #e5e5ea; color: #333;
+  }
+  .pill.preparing { background: #fff3cd; color: #856404; }
+  .pill.ontheway { background: #cce5ff; color: #004085; }
+  .pill.delivered { background: #d4edda; color: #155724; }
+  .small { font-size: 12px; color: #888; }
+  .zone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .zone-grid button {
+    padding: 12px 8px; font-size: 13px; font-weight: 600;
+    border: 1px solid #ddd; background: #fff; border-radius: 10px; cursor: pointer;
+  }
+  .zone-grid button.selected { background: #c8102e; color: #fff; border-color: #c8102e; }
+  .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+  .payment-grid button {
+    padding: 14px 8px; font-size: 14px; font-weight: 600;
+    border: 2px solid #ddd; background: #fff; border-radius: 12px; cursor: pointer;
+  }
+  .payment-grid button.selected { border-color: #c8102e; background: #ffe5e9; color: #c8102e; }
+  .hidden { display: none !important; }
+  .order-line { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+  .order-total {
+    display: flex; justify-content: space-between; padding-top: 10px;
+    margin-top: 10px; border-top: 2px solid #eee; font-weight: 700; font-size: 16px;
+  }
+  .success-icon { font-size: 60px; text-align: center; display: block; margin: 10px 0; }
+  .center { text-align: center; }
+  .order-card {
+    background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06); cursor: pointer;
+  }
+  .order-card .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .order-card .id { font-size: 13px; font-weight: 700; color: #c8102e; }
+  .order-card .name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+  .order-card .meta { font-size: 12px; color: #777; }
+</style>
+</head>
+<body>
 
+<header>
+  <h1>🍔 La-Sobeh Delivery</h1>
+  <p>Zahle · Bekaa Valley — Fast local delivery</p>
+</header>
+
+<div id="app" class="container"></div>
+
+<script>
+const ADMIN_EMAIL = "rey_lebanon1@outlook.com";
+const WHISH_NUMBER = "71180336";
+const DRIVER_NAME = "Mizo";
+const DRIVER_PHONE = "03033331";
+
+const ZONES = ["Chtoura","Saadnayel","Karak","Ferzoul","Ablah","Tamnin","Rayak","Ksara"];
+
+const RESTAURANTS = [
+  { id:"r1", name:"Restaurant One", cuisine:"Lebanese Grill", location:"Zahle Main Street", menu:[
+    { id:"r1m1", name:"Mixed Grill Plate", price:450000 },
+    { id:"r1m2", name:"Chicken Taouk", price:320000 },
+    { id:"r1m3", name:"Hummus & Bread", price:120000 }
+  ]},
+  { id:"r2", name:"Restaurant Two", cuisine:"Fast Food & Snacks", location:"Saadnayel Highway", menu:[
+    { id:"r2m1", name:"Burger Meal", price:280000 },
+    { id:"r2m2", name:"Shawarma Sandwich", price:150000 },
+    { id:"r2m3", name:"Fries", price:90000 }
+  ]},
+  { id:"r3", name:"Restaurant Three", cuisine:"Pub & Bites", location:"Ksara Road", menu:[
+    { id:"r3m1", name:"Wings Basket", price:260000 },
+    { id:"r3m2", name:"Mozzarella Sticks", price:180000 },
+    { id:"r3m3", name:"Soft Drink", price:60000 }
+  ]}
+];
+
+const GROCERY = { id:"grocery", name:"La-Sobeh Grocery", location:"Zahle", menu:[
+  { id:"g1", name:"Bread Pack", price:30000 },
+  { id:"g2", name:"Milk 1L", price:90000 },
+  { id:"g3", name:"Eggs (30)", price:250000 },
+  { id:"g4", name:"Water 5L", price:45000 },
+  { id:"g5", name:"Rice 1kg", price:110000 }
+]};
+
+let state = {
+  screen:"login", user:null, category:null, vendor:null,
+  cart:[], zone:null, payment:null, currentOrder:null
+};
+
+const LSK = { users:"lasobeh_users", orders:"lasobeh_orders", session:"lasobeh_session" };
+function loadUsers(){ try{return JSON.parse(localStorage.getItem(LSK.users))||{}}catch(e){return{}} }
+function saveUsers(u){ localStorage.setItem(LSK.users, JSON.stringify(u)) }
+function loadOrders(){ try{return JSON.parse(localStorage.getItem(LSK.orders))||[]}catch(e){return[]} }
+function saveOrders(o){ localStorage.setItem(LSK.orders, JSON.stringify(o)) }
+function setSession(s){ s?localStorage.setItem(LSK.session,JSON.stringify(s)):localStorage.removeItem(LSK.session) }
+function getSession(){ try{return JSON.parse(localStorage.getItem(LSK.session))}catch(e){return null} }
+
+function money(n){ return n.toLocaleString()+" L.L" }
+function el(html){ const d=document.createElement("div"); d.innerHTML=html.trim(); return d.firstChild }
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])) }
+function cartCount(){ return state.cart.reduce((s,i)=>s+i.qty,0) }
+function cartTotal(){ return state.cart.reduce((s,i)=>s+i.price*i.qty,0) }
+
+function render(){
+  const app=document.getElementById("app"); app.innerHTML="";
+  const s=state.screen;
+  if(s==="login") app.appendChild(viewLogin());
+  else if(s==="home") app.appendChild(viewHome());
+  else if(s==="foodList") app.appendChild(viewFoodList());
+  else if(s==="vendor") app.appendChild(viewVendor());
+  else if(s==="checkout") app.appendChild(viewCheckout());
+  else if(s==="confirm") app.appendChild(viewConfirm());
+  else if(s==="track") app.appendChild(viewTrack());
+  else if(s==="myOrders") app.appendChild(viewMyOrders());
+  else if(s==="adminLogin") app.appendChild(viewAdminLogin());
+  else if(s==="admin") app.appendChild(viewAdmin());
+  else if(s==="adminOrder") app.appendChild(viewAdminOrder());
+  window.scrollTo(0,0);
+}
+
+function viewLogin(){
+  const w=el(`<div>
+    <div class="card"><h2>Welcome 👋</h2><p>Login with your email to place an order. You can track your orders anytime.</p></div>
+    <div class="card">
+      <div class="input-group"><label>Email</label><input id="le" type="email" placeholder="you@example.com"></div>
+      <div class="input-group"><label>Full Name</label><input id="ln" type="text" placeholder="Your name"></div>
+      <div class="input-group"><label>Phone</label><input id="lp" type="tel" placeholder="70 123 456"></div>
+      <button class="btn" id="lb">Login / Register</button>
+      <p class="small center" style="margin-top:12px;">Later we'll add Lebanese phone number login.</p>
+    </div>
+    <button class="btn btn-secondary btn-small" id="al">Admin login →</button>
+  </div>`);
+  w.querySelector("#lb").onclick=()=>{
+    const e=w.querySelector("#le").value.trim().toLowerCase();
+    const n=w.querySelector("#ln").value.trim();
+    const p=w.querySelector("#lp").value.trim();
+    if(!e||!n||!p){alert("Please fill all fields.");return}
+    if(!e.includes("@")){alert("Please enter a valid email.");return}
+    const users=loadUsers(); users[e]={email:e,name:n,phone:p}; saveUsers(users);
+    state.user=users[e]; setSession(state.user); state.screen="home"; render();
+  };
+  w.querySelector("#al").onclick=()=>{ state.screen="adminLogin"; render() };
+  return w;
+}
+
+function viewHome(){
+  const isAdmin = state.user && state.user.email===ADMIN_EMAIL;
+  const w=el(`<div>
+    ${isAdmin?`<button class="btn btn-secondary btn-small" id="ap" style="margin-bottom:12px;">🔐 Admin Panel</button>`:""}
+    <div class="card"><h2>Hi ${esc(state.user.name)} 👋</h2><p>What would you like today?</p></div>
+    <div class="big-option" id="fo"><span class="emoji">🍽️</span><h3>Food</h3><p>Restaurants · Snacks · Pubs</p></div>
+    <div class="big-option" id="go"><span class="emoji">🛒</span><h3>Grocery</h3><p>From La-Sobeh Grocery</p></div>
+    <button class="btn btn-secondary btn-small" id="mo">📦 My Orders</button>
+    <button class="btn btn-secondary btn-small" id="lo">Logout</button>
+  </div>`);
+  w.querySelector("#fo").onclick=()=>{ state.category="food"; state.screen="foodList"; render() };
+  w.querySelector("#go").onclick=()=>{ state.category="grocery"; state.vendor=GROCERY; state.cart=[]; state.screen="vendor"; render() };
+  w.querySelector("#mo").onclick=()=>{ state.screen="myOrders"; render() };
+  w.querySelector("#lo").onclick=()=>{ state.user=null; setSession(null); state.screen="login"; render() };
+  const ap=w.querySelector("#ap"); if(ap) ap.onclick=()=>{ state.screen="admin"; render() };
+  return w;
+}
+
+function viewFoodList(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>Choose a restaurant</h2><p>3 restaurants available now.</p></div>
+    <div id="list"></div>
+  </div>`);
+  const list=w.querySelector("#list");
+  RESTAURANTS.forEach(r=>{
+    const c=el(`<div class="card"><h2>${esc(r.name)}</h2><p>${esc(r.cuisine)} · 📍 ${esc(r.location)}</p>
+      <button class="btn btn-small" style="margin-top:10px;">View Menu</button></div>`);
+    c.querySelector("button").onclick=()=>{ state.vendor=r; state.cart=[]; state.screen="vendor"; render() };
+    list.appendChild(c);
+  });
+  w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
+  return w;
+}
+
+function viewVendor(){
+  const v=state.vendor;
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p>
+      <a href="https://maps.google.com/?q=${encodeURIComponent(v.location)}" target="_blank">
+        <button class="btn btn-secondary btn-small" style="margin-top:8px;">🗺️ Open in Google Maps</button>
+      </a>
+    </div>
+    <div class="card"><h2>Menu</h2><div id="menu"></div></div>
+  </div>`);
+  const menu=w.querySelector("#menu");
+  v.menu.forEach(item=>{
+    const row=el(`<div class="menu-item"><div><div class="name">${esc(item.name)}</div><div class="price">${money(item.price)}</div></div>
+      <div class="qty" id="q-${item.id}"></div></div>`);
+    menu.appendChild(row);
+    paintQty(item, row.querySelector(".qty"));
+  });
+  w.querySelector("#b").onclick=()=>{ state.screen = state.category==="food"?"foodList":"home"; render() };
+  return w;
+}
+
+function paintQty(item, holder){
+  holder.innerHTML="";
+  const inCart = state.cart.find(c=>c.id===item.id);
+  if(!inCart){
+    const btn=el(`<button class="add-btn">+ Add</button>`);
+    btn.onclick=()=>{ state.cart.push({id:item.id,name:item.name,price:item.price,qty:1}); paintQty(item,holder); renderCartBar() };
+    holder.appendChild(btn);
+  } else {
+    const ctrl=el(`<div class="qty-control"><button>-</button><span>${inCart.qty}</span><button>+</button></div>`);
+    const [minus,plus]=ctrl.querySelectorAll("button");
+    minus.onclick=()=>{ inCart.qty--; if(inCart.qty<=0) state.cart=state.cart.filter(c=>c.id!==item.id); paintQty(item,holder); renderCartBar() };
+    plus.onclick=()=>{ inCart.qty++; paintQty(item,holder); renderCartBar() };
+    holder.appendChild(ctrl);
+  }
+}
+
+function renderCartBar(){
+  const old=document.getElementById("cartbar"); if(old) old.remove();
+  if(cartCount()===0) return;
+  const bar=el(`<div class="cart-bar" id="cartbar"><div><div class="count">${cartCount()} item(s)</div><div class="total">${money(cartTotal())}</div></div><div>Checkout →</div></div>`);
+  bar.onclick=()=>{ state.screen="checkout"; render() };
+  document.body.appendChild(bar);
+}
+
+function viewCheckout(){
+  if(cartCount()===0){ state.screen="vendor"; render(); return el(`<div></div>`) }
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>Your Order</h2><div id="items"></div><div class="order-total"><span>Total</span><span>${money(cartTotal())}</span></div></div>
+    <div class="card"><h2>Delivery Details</h2>
+      <div class="input-group"><label>Full Name</label><input id="n" value="${esc(state.user.name)}"></div>
+      <div class="input-group"><label>Phone</label><input id="p" value="${esc(state.user.phone)}"></div>
+      <div class="input-group"><label>Choose your zone</label><div class="zone-grid" id="zg"></div></div>
+      <div class="input-group"><label>Address & Delivery Note</label>
+        <textarea id="a" placeholder="Building name, floor, house number, landmarks... and any note for the driver"></textarea></div>
+      <p class="small">Include building name, house number, or a landmark so we can find you faster. Driver will call before arriving.</p>
+    </div>
+    <div class="card"><h2>Payment</h2>
+      <div class="payment-grid" id="pg">
+        <button data-p="cod">💵 Cash on Delivery</button>
+        <button data-p="whish">📱 Whish Money</button>
+      </div>
+      <p class="small" style="margin-top:10px;">Whish number to send to: <b>${WHISH_NUMBER}</b>. Send the amount, then place the order. Driver will verify.</p>
+    </div>
+    <button class="btn" id="place">Place Order</button>
+  </div>`);
+  const itemsBox=w.querySelector("#items");
+  state.cart.forEach(c=>{
+    itemsBox.appendChild(el(`<div class="order-line"><span>${c.qty}× ${esc(c.name)}</span><span>${money(c.price*c.qty)}</span></div>`));
+  });
+  const zg=w.querySelector("#zg");
+  ZONES.forEach(z=>{
+    const btn=el(`<button>${z}</button>`);
+    if(state.zone===z) btn.classList.add("selected");
+    btn.onclick=()=>{ state.zone=z; zg.querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected") };
+    zg.appendChild(btn);
+  });
+  const pg=w.querySelector("#pg");
+  pg.querySelectorAll("button").forEach(btn=>{
+    if(state.payment===btn.dataset.p) btn.classList.add("selected");
+    btn.onclick=()=>{ state.payment=btn.dataset.p; pg.querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected") };
+  });
+  w.querySelector("#b").onclick=()=>{ state.screen="vendor"; render() };
+  w.querySelector("#place").onclick=()=>{
+    const n=w.querySelector("#n").value.trim();
+    const p=w.querySelector("#p").value.trim();
+    const a=w.querySelector("#a").value.trim();
+    if(!n||!p){alert("Please enter name and phone.");return}
+    if(!state.zone){alert("Please choose your zone.");return}
+    if(!a){alert("Please add your address / delivery note.");return}
+    if(!state.payment){alert("Please choose a payment method.");return}
+    const order={
+      id:"LS-"+Date.now().toString().slice(-6),
+      email:state.user.email, name:n, phone:p, address:a,
+      zone:state.zone, payment:state.payment,
+      vendor:state.vendor.name,
+      items:state.cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),
+      total:cartTotal(),
+      status:"preparing",
+      driver:DRIVER_NAME, driverPhone:DRIVER_PHONE,
+      createdAt:new Date().toISOString()
+    };
+    const orders=loadOrders(); orders.unshift(order); saveOrders(orders);
+    state.currentOrder=order; state.cart=[];
+    const cb=document.getElementById("cartbar"); if(cb) cb.remove();
+    state.screen="confirm"; render();
+  };
+  return w;
+}
+
+function viewConfirm(){
+  const o=state.currentOrder;
+  const w=el(`<div>
+    <div class="card center"><span class="success-icon">✅</span>
+      <h2>Order Placed!</h2>
+      <p style="margin-top:6px;">Order ID: <b>${o.id}</b></p>
+      <p class="small" style="margin-top:4px;">We've sent it to ${esc(o.vendor)}.</p>
+    </div>
+    <div class="card"><h2>Driver Assigned</h2>
+      <p style="margin-top:6px;">👤 <b>${esc(o.driver)}</b> will deliver your order.</p>
+      <a href="tel:${o.driverPhone}"><button class="btn" style="margin-top:12px;">📞 Call ${esc(o.driver)}</button></a>
+      <p class="small" style="margin-top:8px;">📱 Chat with driver: coming soon (during active order only).</p>
+    </div>
+    <div class="card"><h2>Order Summary</h2><div id="s"></div>
+      <div class="order-total"><span>Total</span><span>${money(o.total)}</span></div>
+      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"💵 Cash on Delivery":"📱 Whish Money"} · Zone: ${esc(o.zone)}</p>
+    </div>
+    <button class="btn" id="track">Track Order</button>
+    <button class="btn btn-secondary btn-small" id="home">Back to Home</button>
+  </div>`);
+  const s=w.querySelector("#s");
+  o.items.forEach(i=>s.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty)}</span></div>`)));
+  w.querySelector("#track").onclick=()=>{ state.screen="track"; render() };
+  w.querySelector("#home").onclick=()=>{ state.screen="home"; render() };
+  return w;
+}
+
+function viewTrack(){
+  const o=state.currentOrder;
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>Order ${o.id}</h2>
+      <p style="margin-top:6px;">Status: <span class="pill ${o.status}">${statusLabel(o.status)}</span></p>
+      <p style="margin-top:6px;">Driver: <b>${esc(o.driver)}</b></p>
+      <a href="tel:${o.driverPhone}"><button class="btn" style="margin-top:10px;">📞 Call Driver</button></a>
+    </div>
+    <div class="card"><h2>🗺️ Map</h2>
+      <p>Live driver location will appear here (Stage 2, needs backend).</p>
+      <a href="https://maps.google.com/?q=${encodeURIComponent(o.zone+", Bekaa, Lebanon")}" target="_blank">
+        <button class="btn btn-secondary btn-small" style="margin-top:10px;">Open Zone in Google Maps</button>
+      </a>
+    </div>
+  </div>`);
+  w.querySelector("#b").onclick=()=>{ state.screen="confirm"; render() };
+  return w;
+}
+
+function statusLabel(s){ return s==="preparing"?"Preparing":s==="ontheway"?"On the way":s==="delivered"?"Delivered":s }
+
+function viewMyOrders(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>My Orders</h2><p>Your past orders appear here.</p></div>
+    <div id="list"></div>
+  </div>`);
+  const list=w.querySelector("#list");
+  const mine=loadOrders().filter(o=>o.email===state.user.email);
+  if(mine.length===0){ list.appendChild(el(`<div class="card center"><p>No orders yet.</p></div>`)) }
+  mine.forEach(o=>{
+    const c=el(`<div class="order-card"><div class="top"><span class="id">${o.id}</span><span class="pill ${o.status}">${statusLabel(o.status)}</span></div>
+      <div class="name">${esc(o.vendor)}</div>
+      <div class="meta">${money(o.total)} · ${new Date(o.createdAt).toLocaleString()}</div></div>`);
+    c.onclick=()=>{ state.currentOrder=o; state.screen="track"; render() };
+    list.appendChild(c);
+  });
+  w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
+  return w;
+}
+
+function viewAdminLogin(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>Admin Login</h2><p>Enter the admin email to view orders.</p></div>
+    <div class="card">
+      <div class="input-group"><label>Admin Email</label><input id="ae" type="email" placeholder="${ADMIN_EMAIL}"></div>
+      <button class="btn" id="ab">Enter Admin Panel</button>
+    </div>
+  </div>`);
+  w.querySelector("#ab").onclick=()=>{
+    const e=w.querySelector("#ae").value.trim().toLowerCase();
+    if(e!==ADMIN_EMAIL){alert("Not an admin email.");return}
+    const users=loadUsers();
+    if(!users[e]) users[e]={email:e,name:"Admin",phone:""};
+    saveUsers(users); state.user=users[e]; setSession(state.user);
+    state.screen="admin"; render();
+  };
+  w.querySelector("#b").onclick=()=>{ state.screen="login"; render() };
+  return w;
+}
+
+function viewAdmin(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Exit Admin</button>
+    <div class="card"><h2>🔐 Admin — All Orders</h2>
+      <p class="small">Note: only orders placed on this same phone/browser are shown (Stage 1). Stage 2 will sync across devices.</p>
+    </div>
+    <div id="list"></div>
+  </div>`);
+  const list=w.querySelector("#list");
+  const orders=loadOrders();
+  if(orders.length===0) list.appendChild(el(`<div class="card center"><p>No orders yet.</p></div>`));
+  orders.forEach(o=>{
+    const c=el(`<div class="order-card"><div class="top"><span class="id">${o.id}</span><span class="pill ${o.status}">${statusLabel(o.status)}</span></div>
+      <div class="name">${esc(o.name)} — ${esc(o.vendor)}</div>
+      <div class="meta">${esc(o.zone)} · ${money(o.total)} · ${o.payment==="cod"?"COD":"Whish"}</div></div>`);
+    c.onclick=()=>{ state.currentOrder=o; state.screen="adminOrder"; render() };
+    list.appendChild(c);
+  });
+  w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
+  return w;
+}
+
+function viewAdminOrder(){
+  const o=state.currentOrder;
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>Order ${o.id}</h2>
+      <p style="margin-top:6px;"><b>${esc(o.name)}</b></p>
+      <p>📞 ${esc(o.phone)}</p>
+      <p>📍 ${esc(o.zone)}</p>
+      <p style="margin-top:6px;">${esc(o.address)}</p>
+      <a href="tel:${o.phone}"><button class="btn btn-small" style="margin-top:8px;">📞 Call Customer</button></a>
+    </div>
+    <div class="card"><h2>Items</h2><div id="it"></div>
+      <div class="order-total"><span>Total</span><span>${money(o.total)}</span></div>
+      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"💵 Cash on Delivery":"📱 Whish Money (${WHISH_NUMBER})"}</p>
+    </div>
+    <div class="card"><h2>Status</h2>
+      <div class="payment-grid" id="st">
+        <button data-s="preparing"${o.status==="preparing"?' class="selected"':""}>Preparing</button>
+        <button data-s="ontheway"${o.status==="ontheway"?' class="selected"':""}>On the way</button>
+        <button data-s="delivered"${o.status==="delivered"?' class="selected"':""}>Delivered</button>
+      </div>
+    </div>
+  </div>`);
+  const it=w.querySelector("#it");
+  o.items.forEach(i=>it.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty)}</span></div>`)));
+  w.querySelector("#st").querySelectorAll("button").forEach(btn=>{
+    btn.onclick=()=>{
+      const orders=loadOrders();
+      const idx=orders.findIndex(x=>x.id===o.id);
+      if(idx>=0){ orders[idx].status=btn.dataset.s; saveOrders(orders); state.currentOrder=orders[idx] }
+      state.screen="adminOrder"; render();
+    };
+  });
+  w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
+  return w;
+}
+
+(function init(){
+  const s=getSession();
+  if(s && s.email){ state.user=s; state.screen="home" } else { state.screen="login" }
+  render();
+})();
+</script>
+</body>
+</html>
