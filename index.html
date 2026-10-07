@@ -8,98 +8,52 @@
 <link rel="icon" href="la-sobeh-logo.png.jpg.jpg">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    background: #f5f5f7; color: #1a1a1a; min-height: 100vh; padding-bottom: 90px;
-  }
-  header {
-    background: #fff; color: #1a1a1a; padding: 12px 16px;
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    display: flex; align-items: center; gap: 12px;
-  }
+  body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #f5f5f7; color: #1a1a1a; min-height: 100vh; padding-bottom: 90px; }
+  header { background: #fff; color: #1a1a1a; padding: 12px 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.08); display: flex; align-items: center; gap: 12px; }
   header img { height: 44px; width: auto; }
   header .brand h1 { font-size: 17px; font-weight: 700; color: #c8102e; }
   header .brand p { font-size: 11px; color: #777; margin-top: 1px; }
   .container { padding: 16px; max-width: 640px; margin: 0 auto; }
-  .card {
-    background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.06);
-  }
+  .card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
   .card h2 { font-size: 17px; margin-bottom: 6px; }
   .card p { font-size: 14px; color: #555; line-height: 1.5; }
-  .btn {
-    display: block; width: 100%; background: #c8102e; color: #fff;
-    border: none; padding: 14px; font-size: 16px; font-weight: 600;
-    border-radius: 12px; cursor: pointer; margin-top: 10px; text-align: center;
-    text-decoration: none;
-  }
+  .btn { display: block; width: 100%; background: #c8102e; color: #fff; border: none; padding: 14px; font-size: 16px; font-weight: 600; border-radius: 12px; cursor: pointer; margin-top: 10px; text-align: center; text-decoration: none; }
   .btn:active { background: #a00d24; }
   .btn-secondary { background: #fff; color: #c8102e; border: 2px solid #c8102e; }
   .btn-secondary:active { background: #ffe5e9; }
   .btn-small { padding: 10px; font-size: 14px; }
-  .big-option {
-    background: #fff; border-radius: 14px; padding: 24px; margin-bottom: 12px;
-    text-align: center; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.06);
-  }
+  .btn-green { background: #28a745; }
+  .btn-green:active { background: #1e7e34; }
+  .btn-red { background: #dc3545; }
+  .btn-red:active { background: #a71d2a; }
+  .big-option { background: #fff; border-radius: 14px; padding: 24px; margin-bottom: 12px; text-align: center; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
   .big-option:active { background: #fafafa; }
   .big-option .emoji { font-size: 44px; display: block; margin-bottom: 8px; }
   .big-option h3 { font-size: 20px; margin-bottom: 4px; }
   .big-option p { font-size: 13px; color: #777; }
   .input-group { margin-bottom: 14px; }
   .input-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #333; }
-  .input-group input, .input-group textarea, .input-group select {
-    width: 100%; padding: 12px; font-size: 15px;
-    border: 1px solid #ddd; border-radius: 10px; background: #fff; font-family: inherit;
-  }
+  .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px; font-size: 15px; border: 1px solid #ddd; border-radius: 10px; background: #fff; font-family: inherit; }
   .input-group textarea { min-height: 80px; resize: vertical; }
-  .search-bar {
-    width: 100%; padding: 12px 14px; font-size: 15px; border: 1px solid #ddd;
-    border-radius: 12px; background: #fff; margin-bottom: 10px;
-  }
-  .cat-bar {
-    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .cat-bar button {
-    flex: 0 0 auto; padding: 8px 16px; border-radius: 20px; border: 1px solid #ddd;
-    background: #fff; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap;
-  }
+  .search-bar { width: 100%; padding: 12px 14px; font-size: 15px; border: 1px solid #ddd; border-radius: 12px; background: #fff; margin-bottom: 10px; }
+  .cat-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; -webkit-overflow-scrolling: touch; }
+  .cat-bar button { flex: 0 0 auto; padding: 8px 16px; border-radius: 20px; border: 1px solid #ddd; background: #fff; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; }
   .cat-bar button.active { background: #c8102e; color: #fff; border-color: #c8102e; }
-  .menu-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 0; border-bottom: 1px solid #eee;
-  }
+  .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eee; }
   .menu-item:last-child { border-bottom: none; }
-  .menu-item .thumb {
-    width: 68px; height: 68px; border-radius: 10px; object-fit: cover;
-    background: #eee; flex-shrink: 0;
-  }
+  .menu-item .thumb { width: 68px; height: 68px; border-radius: 10px; object-fit: cover; background: #eee; flex-shrink: 0; }
   .menu-item .info { flex: 1; min-width: 0; }
   .menu-item .name { font-size: 15px; font-weight: 600; }
   .menu-item .price { font-size: 13px; color: #c8102e; font-weight: 600; margin-top: 2px; }
   .menu-item .from { font-size: 11px; color: #888; margin-top: 2px; }
-  .add-btn {
-    background: #c8102e; color: #fff; border: none; padding: 8px 14px;
-    border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
-  }
+  .add-btn { background: #c8102e; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
   .qty-control { display: flex; align-items: center; gap: 8px; }
-  .qty-control button {
-    width: 30px; height: 30px; border-radius: 50%; border: none;
-    background: #c8102e; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
-  }
+  .qty-control button { width: 30px; height: 30px; border-radius: 50%; border: none; background: #c8102e; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; }
   .qty-control span { font-size: 14px; font-weight: 600; min-width: 18px; text-align: center; }
-  .cart-bar {
-    position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; color: #fff;
-    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 -2px 10px rgba(0,0,0,.2); cursor: pointer;
-  }
+  .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; color: #fff; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -2px 10px rgba(0,0,0,.2); cursor: pointer; }
   .cart-bar .count { font-size: 13px; opacity: .85; }
   .cart-bar .total { font-size: 16px; font-weight: 700; }
-  .pill {
-    display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 600;
-    border-radius: 20px; background: #e5e5ea; color: #333;
-  }
+  .pill { display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 20px; background: #e5e5ea; color: #333; }
   .pill.pending { background: #ffe5e9; color: #a00d24; }
   .pill.accepted { background: #d1ecf1; color: #0c5460; }
   .pill.preparing { background: #fff3cd; color: #856404; }
@@ -108,56 +62,32 @@
   .pill.rejected { background: #f8d7da; color: #721c24; }
   .small { font-size: 12px; color: #888; }
   .zone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .zone-grid button {
-    padding: 12px 8px; font-size: 13px; font-weight: 600;
-    border: 1px solid #ddd; background: #fff; border-radius: 10px; cursor: pointer;
-  }
+  .zone-grid button { padding: 12px 8px; font-size: 13px; font-weight: 600; border: 1px solid #ddd; background: #fff; border-radius: 10px; cursor: pointer; }
   .zone-grid button.selected { background: #c8102e; color: #fff; border-color: #c8102e; }
   .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
-  .payment-grid button {
-    padding: 14px 8px; font-size: 13px; font-weight: 600;
-    border: 2px solid #ddd; background: #fff; border-radius: 12px; cursor: pointer;
-  }
+  .payment-grid button { padding: 14px 8px; font-size: 13px; font-weight: 600; border: 2px solid #ddd; background: #fff; border-radius: 12px; cursor: pointer; }
   .payment-grid button.selected { border-color: #c8102e; background: #ffe5e9; color: #c8102e; }
   .order-line { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
-  .order-total {
-    display: flex; justify-content: space-between; padding-top: 10px;
-    margin-top: 10px; border-top: 2px solid #eee; font-weight: 700; font-size: 16px;
-  }
+  .order-total { display: flex; justify-content: space-between; padding-top: 10px; margin-top: 10px; border-top: 2px solid #eee; font-weight: 700; font-size: 16px; }
   .success-icon { font-size: 60px; text-align: center; display: block; margin: 10px 0; }
   .center { text-align: center; }
-  .order-card {
-    background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.06); cursor: pointer;
-  }
+  .order-card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.06); cursor: pointer; }
   .order-card.pending-highlight { border-left: 5px solid #c8102e; background: #fff8f9; }
+  .order-card.driver-highlight { border-left: 5px solid #28a745; background: #f4faf5; }
   .order-card .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .order-card .id { font-size: 13px; font-weight: 700; color: #c8102e; }
   .order-card .name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
   .order-card .meta { font-size: 12px; color: #777; }
   .resto-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
-  .resto-logo {
-    width: 64px; height: 64px; border-radius: 12px; object-fit: cover;
-    background: #eee; flex-shrink: 0;
-  }
+  .resto-logo { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: #eee; flex-shrink: 0; }
   .login-logo { display: block; max-width: 180px; margin: 0 auto 14px; }
   .loading { text-align: center; padding: 40px; color: #888; }
-  .wallet-badge {
-    display: inline-block; background: #d4edda; color: #155724; font-weight: 700;
-    padding: 6px 12px; border-radius: 20px; font-size: 13px;
-  }
-  .token-badge {
-    display: inline-block; background: #fff3cd; color: #856404; font-weight: 700;
-    padding: 6px 12px; border-radius: 20px; font-size: 13px;
-  }
-  .photo-preview {
-    width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px;
-    margin-top: 8px; background: #f5f5f5;
-  }
+  .wallet-badge { display: inline-block; background: #d4edda; color: #155724; font-weight: 700; padding: 6px 12px; border-radius: 20px; font-size: 13px; }
+  .token-badge { display: inline-block; background: #fff3cd; color: #856404; font-weight: 700; padding: 6px 12px; border-radius: 20px; font-size: 13px; }
+  .photo-preview { width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; margin-top: 8px; background: #f5f5f5; }
 </style>
 </head>
 <body>
-
 <header>
   <img src="la-sobeh-logo.png.jpg.jpg" alt="La-Sobeh" onerror="this.style.display='none'">
   <div class="brand">
@@ -165,13 +95,12 @@
     <p>Zahle · Bekaa Valley · 24/7</p>
   </div>
 </header>
-
 <div id="app" class="container"><div class="loading">Loading…</div></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, setDoc,
+  getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, setDoc, deleteDoc,
   query, where, orderBy, onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -189,8 +118,6 @@ const db = getFirestore(fbApp);
 const ADMIN_PIN = "3397";
 const WHISH_NUMBER = "71180336";
 const WHATSAPP_NUMBER = "71180336";
-const DRIVER_NAME = "Mizo";
-const DRIVER_PHONE = "03033331";
 const USD_RATE = 90000;
 
 const ZONES = [
@@ -208,66 +135,51 @@ const ZONES = [
 const CATEGORIES = ["All","Burgers","Sandwiches","Grills","Combos","Juices","Soft Drinks","Grocery","Packages","Errands"];
 
 const RESTAURANTS = [
-  {
-    id:"efendim", name:"Efendim Restaurant", cuisine:"Turkish",
-    location:"Zahle", logo:"efendim.png.jpg",
+  { id:"efendim", name:"Efendim Restaurant", cuisine:"Turkish", location:"Zahle", logo:"efendim.png.jpg",
     menu:[
-      { id:"ef1", name:"Tawouk Sandwich",  priceLL:700000,  priceUSD:8,  img:"efendim-tawouk.png.jpg.JPG", cat:"Sandwiches" },
-      { id:"ef2", name:"Chicken Efendim",  priceLL:1200000, priceUSD:14, img:"efendim-chicken.png.jpg.JPG", cat:"Grills" }
-    ]
-  },
-  {
-    id:"grillgo", name:"Grill & Go Restaurant", cuisine:"Fast Food",
-    location:"Zahle", logo:"grillgo.png.jpg",
+      { id:"ef1", name:"Tawouk Sandwich", priceLL:700000, priceUSD:8, img:"efendim-tawouk.png.jpg.JPG", cat:"Sandwiches" },
+      { id:"ef2", name:"Chicken Efendim", priceLL:1200000, priceUSD:14, img:"efendim-chicken.png.jpg.JPG", cat:"Grills" }
+    ]},
+  { id:"grillgo", name:"Grill & Go Restaurant", cuisine:"Fast Food", location:"Zahle", logo:"grillgo.png.jpg",
     menu:[
       { id:"gg1", name:"Zinger Combo", priceLL:800000, priceUSD:9, img:"grillgo-zinger.png.jpg.JPG", cat:"Combos" },
-      { id:"gg2", name:"Cranch Boss",  priceLL:600000, priceUSD:7, img:"grillgo-cranch.png.jpg.JPG", cat:"Burgers" }
-    ]
-  },
-  {
-    id:"beitmisk", name:"Beit Misk Restaurant", cuisine:"Lebanese Grill",
-    location:"Zahle", logo:"beitmisk.png.jpg",
+      { id:"gg2", name:"Cranch Boss", priceLL:600000, priceUSD:7, img:"grillgo-cranch.png.jpg.JPG", cat:"Burgers" }
+    ]},
+  { id:"beitmisk", name:"Beit Misk Restaurant", cuisine:"Lebanese Grill", location:"Zahle", logo:"beitmisk.png.jpg",
     menu:[
-      { id:"bm1", name:"Kabab Plate",   priceLL:700000,  priceUSD:8,  img:"beitmisk-kabab.png.jpg.WEBP", cat:"Grills" },
+      { id:"bm1", name:"Kabab Plate", priceLL:700000, priceUSD:8, img:"beitmisk-kabab.png.jpg.WEBP", cat:"Grills" },
       { id:"bm2", name:"Mandi Chicken", priceLL:1200000, priceUSD:14, img:"beitmisk-mandi.png.jpg.AVIF", cat:"Grills" }
-    ]
-  }
+    ]}
 ];
 
 const GROCERY = {
-  id:"grocery", name:"La-Sobeh Grocery", cuisine:"Grocery",
-  location:"Zahle", logo:"",
+  id:"grocery", name:"La-Sobeh Grocery", cuisine:"Grocery", location:"Zahle", logo:"",
   menu:[
     { id:"g1", name:"Red Bull", priceLL:500000, priceUSD:6, img:"grocery-redbull.png.jpg.WEBP", cat:"Soft Drinks" },
-    { id:"g2", name:"Pepsi",    priceLL:100000, priceUSD:2, img:"grocery-pepsi.png.jpg.WEBP", cat:"Soft Drinks" }
+    { id:"g2", name:"Pepsi", priceLL:100000, priceUSD:2, img:"grocery-pepsi.png.jpg.WEBP", cat:"Soft Drinks" }
   ]
 };
 
 let state = {
-  screen:"login", user:null, category:null, vendor:null,
-  cart:[], zone:null, payment:null, currency:"LL", search:"", activeCat:"All",
-  currentOrder:null, wallet:{ balance:0, tokens:0 },
-  deliveryType:"food",
-  packageInfo:null
+  screen:"login", role:"customer", user:null, driver:null,
+  category:null, vendor:null, cart:[], zone:null, payment:null, currency:"LL",
+  search:"", activeCat:"All", currentOrder:null,
+  wallet:{ balance:0, tokens:0 },
+  deliveryType:"food", packageInfo:null,
+  adminOrders:[], driversCache:[]
 };
 
-const LSK = { session:"lasobeh_session_v4" };
+const LSK = { session:"lasobeh_session_v5" };
 function setSession(s){ s?localStorage.setItem(LSK.session,JSON.stringify(s)):localStorage.removeItem(LSK.session) }
 function getSession(){ try{return JSON.parse(localStorage.getItem(LSK.session))}catch(e){return null} }
-
-function money(n, cur){ 
-  if(cur==="USD") return "$"+n;
-  return n.toLocaleString()+" L.L";
-}
-function itemPrice(item, cur){ return cur==="USD" ? item.priceUSD : item.priceLL }
+function money(n, cur){ return cur==="USD" ? "$"+n : n.toLocaleString()+" L.L"; }
 function el(html){ const d=document.createElement("div"); d.innerHTML=html.trim(); return d.firstChild }
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])) }
 function cartCount(){ return state.cart.reduce((s,i)=>s+i.qty,0) }
-function cartTotal(){ return state.cart.reduce((s,i)=>s+i.price*i.qty,0) }
+function cartTotal(){ return state.cart.reduce((s,i)=>s+(state.currency==="USD"?i.priceUSD:i.priceLL)*i.qty,0) }
 function zoneFee(){ const z=ZONES.find(z=>z.name===state.zone); if(!z) return 0; return state.currency==="USD"?z.feeUSD:z.feeLL }
-function grandTotal(){ return cartTotal()+zoneFee() }
 function phoneKey(p){ return p.replace(/[^0-9]/g,"") }
-function statusLabel(s){ 
+function statusLabel(s){
   return s==="pending"?"Pending approval":s==="accepted"?"Accepted":s==="preparing"?"Preparing":
          s==="ontheway"?"On the way":s==="delivered"?"Delivered":s==="rejected"?"Rejected":s;
 }
@@ -275,37 +187,24 @@ function statusLabel(s){
 async function loadWallet(){
   if(!state.user) return;
   try{
-    const ref=doc(db,"customers",state.user.key);
-    const snap=await getDoc(ref);
-    if(snap.exists()){
-      const d=snap.data();
-      state.wallet={ balance:d.balance||0, tokens:d.tokens||0 };
-    } else {
-      state.wallet={ balance:0, tokens:0 };
-    }
+    const snap=await getDoc(doc(db,"customers",state.user.key));
+    if(snap.exists()){ const d=snap.data(); state.wallet={ balance:d.balance||0, tokens:d.tokens||0 }; }
+    else state.wallet={ balance:0, tokens:0 };
   }catch(e){ console.warn(e) }
 }
 
 function render(){
   const app=document.getElementById("app"); app.innerHTML="";
   const s=state.screen;
-  if(s==="login") app.appendChild(viewLogin());
-  else if(s==="home") app.appendChild(viewHome());
-  else if(s==="search") app.appendChild(viewSearch());
-  else if(s==="foodList") app.appendChild(viewFoodList());
-  else if(s==="vendor") app.appendChild(viewVendor());
-  else if(s==="checkout") app.appendChild(viewCheckout());
-  else if(s==="confirm") app.appendChild(viewConfirm());
-  else if(s==="track") app.appendChild(viewTrack());
-  else if(s==="myOrders") app.appendChild(viewMyOrders());
-  else if(s==="wallet") app.appendChild(viewWallet());
-  else if(s==="topup") app.appendChild(viewTopUp());
-  else if(s==="package") app.appendChild(viewPackage());
-  else if(s==="adminLogin") app.appendChild(viewAdminLogin());
-  else if(s==="admin") app.appendChild(viewAdmin());
-  else if(s==="adminOrder") app.appendChild(viewAdminOrder());
-  else if(s==="adminWallet") app.appendChild(viewAdminWallet());
-  else if(s==="adminStats") app.appendChild(viewAdminStats());
+  const V={
+    login:viewLogin, home:viewHome, search:viewSearch, foodList:viewFoodList, vendor:viewVendor,
+    checkout:viewCheckout, confirm:viewConfirm, track:viewTrack, myOrders:viewMyOrders,
+    wallet:viewWallet, topup:viewTopUp, package:viewPackage,
+    adminLogin:viewAdminLogin, admin:viewAdmin, adminOrder:viewAdminOrder,
+    adminWallet:viewAdminWallet, adminStats:viewAdminStats, adminDrivers:viewAdminDrivers,
+    driverLogin:viewDriverLogin, driverHome:viewDriverHome, driverOrder:viewDriverOrder
+  };
+  if(V[s]) app.appendChild(V[s]()); else app.appendChild(el(`<div class="card center"><p>Unknown screen: ${esc(s)}</p></div>`));
   window.scrollTo(0,0);
 }
 
@@ -317,53 +216,41 @@ function viewLogin(){
       <div class="input-group"><label>Phone Number</label><input id="lp" type="tel" placeholder="70 123 456"></div>
       <div class="input-group"><label>Full Name</label><input id="ln" type="text" placeholder="Your name"></div>
       <button class="btn" id="lb">Login / Register</button>
-      <p class="small center" style="margin-top:12px;">If you've ordered before, we'll fill your name automatically.</p>
     </div>
-    <button class="btn btn-secondary btn-small" id="al">Admin login →</button>
+    <button class="btn btn-secondary btn-small" id="dl">🚗 Driver login →</button>
+    <button class="btn btn-secondary btn-small" id="al">🔐 Admin login →</button>
   </div>`);
   const lp=w.querySelector("#lp");
   lp.onblur=async ()=>{
-    const key=phoneKey(lp.value.trim());
-    if(key.length<7) return;
-    try{
-      const snap=await getDoc(doc(db,"customers",key));
-      if(snap.exists()){
-        const data=snap.data();
-        if(data.name) w.querySelector("#ln").value=data.name;
-      }
-    }catch(e){ console.warn(e) }
+    const key=phoneKey(lp.value.trim()); if(key.length<7) return;
+    try{ const snap=await getDoc(doc(db,"customers",key)); if(snap.exists()){ const d=snap.data(); if(d.name) w.querySelector("#ln").value=d.name; } }catch(e){}
   };
   w.querySelector("#lb").onclick=async ()=>{
-    const p=lp.value.trim();
-    const n=w.querySelector("#ln").value.trim();
+    const p=lp.value.trim(), n=w.querySelector("#ln").value.trim();
     if(!p || p.replace(/[^0-9]/g,"").length<7){alert("Please enter a valid phone number.");return}
     if(!n){alert("Please enter your name.");return}
     const key=phoneKey(p);
     try{
-      const ref=doc(db,"customers",key);
-      const snap=await getDoc(ref);
-      if(!snap.exists()){
-        await setDoc(ref, { name:n, phone:p, phoneKey:key, balance:0, tokens:0, createdAt:serverTimestamp() });
-      } else {
-        await updateDoc(ref, { name:n, phone:p, updatedAt:serverTimestamp() });
-      }
-    }catch(e){ console.warn("customer save failed", e) }
+      const ref=doc(db,"customers",key), snap=await getDoc(ref);
+      if(!snap.exists()) await setDoc(ref, { name:n, phone:p, phoneKey:key, balance:0, tokens:0, createdAt:serverTimestamp() });
+      else await updateDoc(ref, { name:n, phone:p, updatedAt:serverTimestamp() });
+    }catch(e){ console.warn(e) }
+    state.role="customer";
     state.user={ name:n, phone:p, key:key };
-    setSession(state.user);
+    setSession({ role:"customer", user:state.user });
     await loadWallet();
     state.screen="home"; render();
   };
   w.querySelector("#al").onclick=()=>{ state.screen="adminLogin"; render() };
+  w.querySelector("#dl").onclick=()=>{ state.screen="driverLogin"; render() };
   return w;
 }
 
 function viewHome(){
-  const walletLine = `<div class="card">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+  const walletLine = `<div class="card"><div style="display:flex;gap:10px;flex-wrap:wrap;">
       <span class="wallet-badge">💵 Wallet: $${state.wallet.balance.toFixed(2)}</span>
       <span class="token-badge">🎁 ${state.wallet.tokens} LS Tokens</span>
-    </div>
-  </div>`;
+    </div></div>`;
   const w=el(`<div>
     <div class="card"><h2>Hi ${esc(state.user.name)} 👋</h2><p>What would you like today?</p></div>
     ${walletLine}
@@ -376,11 +263,7 @@ function viewHome(){
     <button class="btn btn-secondary btn-small" id="mo">📦 My Orders</button>
     <button class="btn btn-secondary btn-small" id="lo">Logout</button>
   </div>`);
-  w.querySelector("#sq").oninput=(e)=>{
-    const q=e.target.value;
-    state.search=q;
-    if(q.length>=2){ state.screen="search"; render() }
-  };
+  w.querySelector("#sq").oninput=(e)=>{ state.search=e.target.value; if(e.target.value.length>=2){ state.screen="search"; render() } };
   w.querySelector("#fo").onclick=()=>{ state.deliveryType="food"; state.category="food"; state.screen="foodList"; render() };
   w.querySelector("#go").onclick=()=>{ state.deliveryType="food"; state.category="grocery"; state.vendor=GROCERY; state.cart=[]; state.screen="vendor"; render() };
   w.querySelector("#po").onclick=()=>{ state.deliveryType="package"; state.packageInfo={mode:"send"}; state.screen="package"; render() };
@@ -393,9 +276,7 @@ function viewHome(){
 
 function allItems(){
   const out=[];
-  RESTAURANTS.forEach(r=>{
-    r.menu.forEach(item=>out.push({ ...item, vendor:r.name, vendorId:r.id, isGrocery:false }));
-  });
+  RESTAURANTS.forEach(r=>r.menu.forEach(item=>out.push({ ...item, vendor:r.name, vendorId:r.id, isGrocery:false })));
   GROCERY.menu.forEach(item=>out.push({ ...item, vendor:GROCERY.name, vendorId:GROCERY.id, isGrocery:true }));
   return out;
 }
@@ -406,32 +287,24 @@ function viewSearch(){
     <input class="search-bar" id="sq" placeholder="🔍 Search for an item…" value="${esc(state.search)}">
     <div id="res"></div>
   </div>`);
-  const sq=w.querySelector("#sq");
-  sq.focus();
+  const sq=w.querySelector("#sq"); sq.focus();
   const paint=()=>{
     const q=state.search.toLowerCase().trim();
     const box=w.querySelector("#res"); box.innerHTML="";
     if(q.length<1){ box.appendChild(el(`<div class="card center"><p>Type to search…</p></div>`)); return }
     const results=allItems().filter(i=>i.name.toLowerCase().includes(q));
-    if(results.length===0){ box.appendChild(el(`<div class="card center"><p>No matches for "${esc(state.search)}".</p></div>`)); return }
+    if(!results.length){ box.appendChild(el(`<div class="card center"><p>No matches.</p></div>`)); return }
     results.forEach(item=>{
-      const imgTag=item.img
-        ? `<img class="thumb" src="${item.img}" onerror="this.style.display='none'">`
-        : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:30px;">🍽️</div>`;
+      const imgTag=item.img?`<img class="thumb" src="${item.img}" onerror="this.style.display='none'">`:`<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:30px;">🍽️</div>`;
       const row=el(`<div class="menu-item">${imgTag}
         <div class="info"><div class="name">${esc(item.name)}</div>
           <div class="price">${money(item.priceLL,"LL")} · ${money(item.priceUSD,"USD")}</div>
-          <div class="from">from ${esc(item.vendor)}</div>
-        </div>
-        <button class="add-btn" data-id="${item.id}" data-vid="${item.vendorId}">+ Add</button>
-      </div>`);
+          <div class="from">from ${esc(item.vendor)}</div></div>
+        <button class="add-btn">+ Add</button></div>`);
       row.querySelector("button").onclick=()=>{
         const existing=state.cart.find(c=>c.id===item.id);
-        if(existing){ existing.qty++ } else {
-          state.cart.push({ id:item.id, name:item.name, priceLL:item.priceLL, priceUSD:item.priceUSD, qty:1 });
-        }
-        renderCartBar();
-        alert("Added to cart: "+item.name);
+        if(existing) existing.qty++; else state.cart.push({ id:item.id, name:item.name, priceLL:item.priceLL, priceUSD:item.priceUSD, qty:1 });
+        renderCartBar(); alert("Added: "+item.name);
       };
       box.appendChild(row);
     });
@@ -457,17 +330,13 @@ function viewFoodList(){
     catbar.appendChild(btn);
   });
   const list=w.querySelector("#list");
-  const filtered=RESTAURANTS.filter(r=>{
-    if(state.activeCat==="All") return true;
-    return r.menu.some(m=>m.cat===state.activeCat);
-  });
+  const filtered=RESTAURANTS.filter(r=>state.activeCat==="All" || r.menu.some(m=>m.cat===state.activeCat));
   filtered.forEach(r=>{
     const items = state.activeCat==="All" ? r.menu : r.menu.filter(m=>m.cat===state.activeCat);
     const c=el(`<div class="card">
       <div class="resto-row">
         <img class="resto-logo" src="${r.logo}" onerror="this.style.display='none'">
-        <div style="flex:1;"><h2>${esc(r.name)}</h2>
-          <p>${esc(r.cuisine)} · 📍 ${esc(r.location)}</p></div>
+        <div style="flex:1;"><h2>${esc(r.name)}</h2><p>${esc(r.cuisine)} · 📍 ${esc(r.location)}</p></div>
       </div>
       <div class="small" style="margin-top:4px;">${items.length} item(s) in ${state.activeCat}</div>
       <button class="btn btn-small" style="margin-top:10px;">View Menu</button>
@@ -475,7 +344,7 @@ function viewFoodList(){
     c.querySelector("button").onclick=()=>{ state.vendor=r; state.cart=[]; state.screen="vendor"; render() };
     list.appendChild(c);
   });
-  if(filtered.length===0) list.appendChild(el(`<div class="card center"><p>No restaurants in this category.</p></div>`));
+  if(!filtered.length) list.appendChild(el(`<div class="card center"><p>No restaurants in this category.</p></div>`));
   w.querySelector("#b").onclick=()=>{ state.screen="home"; state.activeCat="All"; render() };
   return w;
 }
@@ -485,22 +354,18 @@ function viewVendor(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
     <div class="card">
-      ${v.logo?`<div class="resto-row"><img class="resto-logo" src="${v.logo}" onerror="this.style.display='none'"><div style="flex:1;"><h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p></div></div>`
-              :`<h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p>`}
+      ${v.logo?`<div class="resto-row"><img class="resto-logo" src="${v.logo}" onerror="this.style.display='none'"><div style="flex:1;"><h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p></div></div>`:`<h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p>`}
       <a class="btn btn-secondary btn-small" style="margin-top:8px;" href="https://maps.google.com/?q=${encodeURIComponent(v.location+', Lebanon')}" target="_blank">🗺️ Open in Google Maps</a>
     </div>
     <div class="card"><h2>Menu</h2><div id="menu"></div></div>
   </div>`);
   const menu=w.querySelector("#menu");
   v.menu.forEach(item=>{
-    const imgTag=item.img
-      ? `<img class="thumb" src="${item.img}" onerror="this.style.display='none'">`
-      : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:30px;">🍽️</div>`;
+    const imgTag=item.img?`<img class="thumb" src="${item.img}" onerror="this.style.display='none'">`:`<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:30px;">🍽️</div>`;
     const row=el(`<div class="menu-item">${imgTag}
       <div class="info"><div class="name">${esc(item.name)}</div>
         <div class="price">${money(item.priceLL,"LL")} · ${money(item.priceUSD,"USD")}</div></div>
-      <div class="qty"></div>
-    </div>`);
+      <div class="qty"></div></div>`);
     menu.appendChild(row);
     paintQty(item, row.querySelector(".qty"));
   });
@@ -524,62 +389,48 @@ function paintQty(item, holder){
   }
 }
 
-function cartWithCurrency(){
-  return state.cart.map(c=>({
-    id:c.id, name:c.name, qty:c.qty,
-    price: state.currency==="USD" ? c.priceUSD : c.priceLL
-  }));
-}
-
 function renderCartBar(){
   const old=document.getElementById("cartbar"); if(old) old.remove();
   if(cartCount()===0) return;
-  const total=state.cart.reduce((s,i)=>s+(state.currency==="USD"?i.priceUSD:i.priceLL)*i.qty,0);
-  const bar=el(`<div class="cart-bar" id="cartbar"><div><div class="count">${cartCount()} item(s)</div><div class="total">${money(total, state.currency)}</div></div><div>Checkout →</div></div>`);
+  const bar=el(`<div class="cart-bar" id="cartbar"><div><div class="count">${cartCount()} item(s)</div><div class="total">${money(cartTotal(), state.currency)}</div></div><div>Checkout →</div></div>`);
   bar.onclick=()=>{ state.screen="checkout"; render() };
   document.body.appendChild(bar);
 }
 
 function viewCheckout(){
   if(cartCount()===0){ state.screen="home"; render(); return el(`<div></div>`) }
-  const subtotal=state.cart.reduce((s,i)=>s+(state.currency==="USD"?i.priceUSD:i.priceLL)*i.qty,0);
+  const subtotal=cartTotal();
   const fee=zoneFee();
   const total=subtotal+fee;
   const canFreeDeliver = state.wallet.tokens>=20;
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-
     <div class="card"><h2>Currency</h2>
       <div class="payment-grid" id="cg">
         <button data-c="LL"${state.currency==="LL"?' class="selected"':""}>🇱🇧 L.L.</button>
         <button data-c="USD"${state.currency==="USD"?' class="selected"':""}>💵 USD</button>
       </div>
     </div>
-
     <div class="card"><h2>Your Order</h2><div id="items"></div>
       <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(subtotal,state.currency)}</span></div>
       <div class="order-line"><span>Delivery Fee ${state.zone?"("+state.zone+")":""}</span><span id="fee">${state.zone?money(fee,state.currency):"—"}</span></div>
       ${canFreeDeliver?`<div class="order-line"><label><input type="checkbox" id="freeDel"> Use 20 tokens for free delivery</label></div>`:""}
       <div class="order-total"><span>Total</span><span id="grand">${money(total,state.currency)}</span></div>
     </div>
-
     <div class="card"><h2>Delivery Details</h2>
       <div class="input-group"><label>Full Name</label><input id="n" value="${esc(state.user.name)}"></div>
       <div class="input-group"><label>Phone</label><input id="p" value="${esc(state.user.phone)}"></div>
       <div class="input-group"><label>Choose your zone</label><div class="zone-grid" id="zg"></div></div>
-      <div class="input-group"><label>Address & Delivery Note</label>
-        <textarea id="a" placeholder="Building name, floor, house number, landmarks..."></textarea></div>
+      <div class="input-group"><label>Address & Delivery Note</label><textarea id="a" placeholder="Building name, floor, house number, landmarks..."></textarea></div>
     </div>
-
     <div class="card"><h2>Payment Method</h2>
       <div class="payment-grid" id="pg">
-        <button data-p="cod"${state.payment==="cod"?' class="selected"':""}>💵 Cash on Delivery</button>
-        <button data-p="whish"${state.payment==="whish"?' class="selected"':""}>📱 Whish Money</button>
-        <button data-p="wallet"${state.payment==="wallet"?' class="selected"':""}>💰 Pay from Wallet</button>
+        <button data-p="cod"${state.payment==="cod"?' class="selected"':""}>💵 Cash</button>
+        <button data-p="whish"${state.payment==="whish"?' class="selected"':""}>📱 Whish</button>
+        <button data-p="wallet"${state.payment==="wallet"?' class="selected"':""}>💰 Wallet</button>
       </div>
-      <p class="small" style="margin-top:10px;">Whish: <b>${WHISH_NUMBER}</b> · Wallet balance: <b>$${state.wallet.balance.toFixed(2)}</b></p>
+      <p class="small" style="margin-top:10px;">Whish: <b>${WHISH_NUMBER}</b> · Wallet: <b>$${state.wallet.balance.toFixed(2)}</b></p>
     </div>
-
     <button class="btn" id="place">Place Order</button>
   </div>`);
 
@@ -593,18 +444,12 @@ function viewCheckout(){
   ZONES.forEach(z=>{
     const btn=el(`<button>${z.name}</button>`);
     if(state.zone===z.name) btn.classList.add("selected");
-    btn.onclick=()=>{
-      state.zone=z.name;
-      zg.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
-      btn.classList.add("selected");
-      recalc();
-    };
+    btn.onclick=()=>{ state.zone=z.name; zg.querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected"); recalc() };
     zg.appendChild(btn);
   });
 
   function recalc(){
-    const st=state.cart.reduce((s,i)=>s+(state.currency==="USD"?i.priceUSD:i.priceLL)*i.qty,0);
-    const f=zoneFee();
+    const st=cartTotal(), f=zoneFee();
     const fd=w.querySelector("#freeDel");
     const freeDel = fd && fd.checked;
     const t = st + (freeDel?0:f);
@@ -613,65 +458,45 @@ function viewCheckout(){
   }
   const fd=w.querySelector("#freeDel"); if(fd) fd.onchange=recalc;
 
-  const cg=w.querySelector("#cg");
-  cg.querySelectorAll("button").forEach(btn=>{
+  w.querySelector("#cg").querySelectorAll("button").forEach(btn=>{
     btn.onclick=()=>{ state.currency=btn.dataset.c; render() };
   });
-
-  const pg=w.querySelector("#pg");
-  pg.querySelectorAll("button").forEach(btn=>{
+  w.querySelector("#pg").querySelectorAll("button").forEach(btn=>{
     btn.onclick=()=>{
       if(btn.dataset.p==="wallet" && state.wallet.balance<1){ alert("Your wallet is empty. Please top up first."); return }
       state.payment=btn.dataset.p;
-      pg.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+      w.querySelector("#pg").querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
       btn.classList.add("selected");
     };
   });
-
   w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
 
   w.querySelector("#place").onclick=async ()=>{
-    const n=w.querySelector("#n").value.trim();
-    const p=w.querySelector("#p").value.trim();
-    const a=w.querySelector("#a").value.trim();
+    const n=w.querySelector("#n").value.trim(), p=w.querySelector("#p").value.trim(), a=w.querySelector("#a").value.trim();
     if(!n||!p){alert("Please enter name and phone.");return}
     if(!state.zone){alert("Please choose your zone.");return}
-    if(!a){alert("Please add your address / delivery note.");return}
-    if(!state.payment){alert("Please choose a payment method.");return}
+    if(!a){alert("Please add your address.");return}
+    if(!state.payment){alert("Please choose payment.");return}
 
-    w.querySelector("#place").textContent="Placing order…";
-    w.querySelector("#place").disabled=true;
+    w.querySelector("#place").textContent="Placing order…"; w.querySelector("#place").disabled=true;
 
     const freeDel = w.querySelector("#freeDel") && w.querySelector("#freeDel").checked;
-    const st=state.cart.reduce((s,i)=>s+(state.currency==="USD"?i.priceUSD:i.priceLL)*i.qty,0);
-    const f=zoneFee();
+    const st=cartTotal(), f=zoneFee();
     const total= st + (freeDel?0:f);
 
     const orderData={
       userKey:state.user.key, name:n, phone:p, address:a,
       zone:state.zone, payment:state.payment,
-      vendor:state.vendor ? state.vendor.name : "Package delivery",
-      type: state.deliveryType,
-      items: cartWithCurrency(),
+      vendor:state.vendor ? state.vendor.name : "Package",
+      type:"food",
+      items: state.cart.map(c=>({ id:c.id, name:c.name, qty:c.qty, price: state.currency==="USD"?c.priceUSD:c.priceLL })),
       currency:state.currency,
       subtotal:st, deliveryFee:freeDel?0:f, deliveryFeeRaw:f, freeDelivery:freeDel,
       total:total,
       status:"pending",
-      driver:DRIVER_NAME, driverPhone:DRIVER_PHONE,
+      driverId:null, driverName:null, driverPhone:null,
       createdAt:serverTimestamp()
     };
-
-    if(state.deliveryType==="package" && state.packageInfo){
-      orderData.packageInfo = {
-        mode: state.packageInfo.mode,
-        fromAddress: state.packageInfo.fromAddress,
-        toAddress: state.packageInfo.toAddress,
-        storeName: state.packageInfo.storeName,
-        description: state.packageInfo.description,
-        photoName: state.packageInfo.photoName || "",
-        photoUrl: state.packageInfo.photoUrl || ""
-      };
-    }
 
     try{
       const ref=await addDoc(collection(db,"orders"), orderData);
@@ -681,22 +506,19 @@ function viewCheckout(){
         await updateDoc(doc(db,"customers",state.user.key), { balance:newBalance });
       }
       let newTokens = state.wallet.tokens;
-      if(freeDel){ newTokens = newTokens - 20 }
-      if(state.currency==="USD" && total>=100){ newTokens = newTokens + 20 }
-      if(state.currency==="LL" && (total/USD_RATE)>=100){ newTokens = newTokens + 20 }
-      if(newTokens!==state.wallet.tokens){
-        await updateDoc(doc(db,"customers",state.user.key), { tokens:newTokens });
-      }
+      if(freeDel) newTokens = newTokens - 20;
+      const totalUSD = state.currency==="USD" ? total : total/USD_RATE;
+      if(totalUSD>=100) newTokens = newTokens + 20;
+      if(newTokens!==state.wallet.tokens) await updateDoc(doc(db,"customers",state.user.key), { tokens:newTokens });
       await loadWallet();
 
       const order={ ...orderData, id:"LS-"+ref.id.slice(-6).toUpperCase(), docId:ref.id, createdAt:new Date().toISOString() };
-      state.currentOrder=order; state.cart=[]; state.deliveryType="food"; state.packageInfo=null;
+      state.currentOrder=order; state.cart=[];
       const cb=document.getElementById("cartbar"); if(cb) cb.remove();
       state.screen="confirm"; render();
     }catch(e){
-      alert("Failed to place order: "+e.message);
-      w.querySelector("#place").textContent="Place Order";
-      w.querySelector("#place").disabled=false;
+      alert("Failed: "+e.message);
+      w.querySelector("#place").textContent="Place Order"; w.querySelector("#place").disabled=false;
     }
   };
   return w;
@@ -706,106 +528,72 @@ function viewPackage(){
   const mode = state.packageInfo.mode;
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>${mode==="send"?"📦 Send a Package":"🏪 Bring me something"}</h2>
-      <p>${mode==="send"?"We pick up from your location and deliver to the receiver.":"We pick up from a store and bring it to you."}</p>
-    </div>
+    <div class="card"><h2>${mode==="send"?"📦 Send a Package":"🏪 Bring me something"}</h2></div>
     <div class="card">
       <div class="input-group"><label>Your Name</label><input id="pn" value="${esc(state.user.name)}"></div>
       <div class="input-group"><label>Your Phone</label><input id="pp" value="${esc(state.user.phone)}"></div>
       ${mode==="send"?`
-        <div class="input-group"><label>Pickup Address (from)</label><textarea id="from" placeholder="Where should we pick it up?"></textarea></div>
-        <div class="input-group"><label>Drop-off Address (to)</label><textarea id="to" placeholder="Where should we deliver it?"></textarea></div>
-      `:`
-        <div class="input-group"><label>Store name & location</label><input id="store" placeholder="e.g. XYZ Pharmacy, Main Street"></div>
-        <div class="input-group"><label>What to bring</label><textarea id="desc" placeholder="Describe what you need us to pick up and bring you"></textarea></div>
-      `}
-      <div class="input-group"><label>Notes (optional)</label><textarea id="notes" placeholder="Any note for the driver"></textarea></div>
-      <div class="input-group"><label>Photo of the package ${mode==="send"?"(required)":"(optional)"}</label>
-        <input id="ph" type="file" accept="image/*">
-        <img id="preview" class="photo-preview" style="display:none;">
-      </div>
+        <div class="input-group"><label>Pickup Address</label><textarea id="from" placeholder="From where?"></textarea></div>
+        <div class="input-group"><label>Drop-off Address</label><textarea id="to" placeholder="To where?"></textarea></div>`
+      :`
+        <div class="input-group"><label>Store name & location</label><input id="store" placeholder="Store"></div>
+        <div class="input-group"><label>What to bring</label><textarea id="desc" placeholder="Describe"></textarea></div>`}
+      <div class="input-group"><label>Notes</label><textarea id="notes"></textarea></div>
+      <div class="input-group"><label>Photo ${mode==="send"?"(required)":"(optional)"}</label>
+        <input id="ph" type="file" accept="image/*"><img id="preview" class="photo-preview" style="display:none;"></div>
     </div>
-    <div class="card"><h2>Zone & Fee</h2>
-      <div class="zone-grid" id="zg"></div>
-      <p class="small" style="margin-top:8px;">Delivery fee same as normal orders.</p>
-    </div>
+    <div class="card"><h2>Zone</h2><div class="zone-grid" id="zg"></div></div>
     <div class="card"><h2>Payment</h2>
       <div class="payment-grid" id="pg">
-        <button data-p="cod"${state.payment==="cod"?' class="selected"':""}>💵 Cash on Delivery</button>
-        <button data-p="whish"${state.payment==="whish"?' class="selected"':""}>📱 Whish Money</button>
-        <button data-p="wallet"${state.payment==="wallet"?' class="selected"':""}>💰 Pay from Wallet</button>
+        <button data-p="cod"${state.payment==="cod"?' class="selected"':""}>💵 Cash</button>
+        <button data-p="whish"${state.payment==="whish"?' class="selected"':""}>📱 Whish</button>
+        <button data-p="wallet"${state.payment==="wallet"?' class="selected"':""}>💰 Wallet</button>
       </div>
     </div>
     <button class="btn" id="submit">Submit Request</button>
   </div>`);
-
   const zg=w.querySelector("#zg");
-  ZONES.forEach(z=>{
-    const btn=el(`<button>${z.name}</button>`);
-    if(state.zone===z.name) btn.classList.add("selected");
+  ZONES.forEach(z=>{ const btn=el(`<button>${z.name}</button>`); if(state.zone===z.name) btn.classList.add("selected");
     btn.onclick=()=>{ state.zone=z.name; zg.querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected") };
-    zg.appendChild(btn);
+    zg.appendChild(btn); });
+  w.querySelector("#pg").querySelectorAll("button").forEach(btn=>{
+    btn.onclick=()=>{ state.payment=btn.dataset.p; w.querySelector("#pg").querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected") };
   });
-
-  const pg=w.querySelector("#pg");
-  pg.querySelectorAll("button").forEach(btn=>{
-    btn.onclick=()=>{ state.payment=btn.dataset.p; pg.querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected") };
-  });
-
-  const ph=w.querySelector("#ph");
-  const preview=w.querySelector("#preview");
-  let photoDataUrl="";
-  ph.onchange=()=>{
-    const file=ph.files[0]; if(!file) return;
-    const r=new FileReader();
-    r.onload=e=>{ photoDataUrl=e.target.result; preview.src=photoDataUrl; preview.style.display="block"; };
-    r.readAsDataURL(file);
-  };
+  const ph=w.querySelector("#ph"); const preview=w.querySelector("#preview"); let photoDataUrl="";
+  ph.onchange=()=>{ const file=ph.files[0]; if(!file) return; const r=new FileReader(); r.onload=e=>{ photoDataUrl=e.target.result; preview.src=photoDataUrl; preview.style.display="block" }; r.readAsDataURL(file) };
 
   w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
   w.querySelector("#submit").onclick=async ()=>{
-    const n=w.querySelector("#pn").value.trim();
-    const p=w.querySelector("#pp").value.trim();
+    const n=w.querySelector("#pn").value.trim(), p=w.querySelector("#pp").value.trim();
     if(!n||!p){alert("Please enter name and phone.");return}
-    if(!state.zone){alert("Please choose your zone.");return}
+    if(!state.zone){alert("Please choose zone.");return}
     if(!state.payment){alert("Please choose payment.");return}
-
     let info={ mode };
     if(mode==="send"){
-      const from=w.querySelector("#from").value.trim();
-      const to=w.querySelector("#to").value.trim();
-      if(!from||!to){alert("Please enter pickup and drop-off addresses.");return}
-      if(!photoDataUrl){alert("Please add a photo of the package.");return}
+      const from=w.querySelector("#from").value.trim(), to=w.querySelector("#to").value.trim();
+      if(!from||!to){alert("Enter both addresses.");return}
+      if(!photoDataUrl){alert("Please add a photo.");return}
       info.fromAddress=from; info.toAddress=to; info.description=w.querySelector("#notes").value.trim();
     } else {
-      const store=w.querySelector("#store").value.trim();
-      const desc=w.querySelector("#desc").value.trim();
-      if(!store||!desc){alert("Please enter the store and what to bring.");return}
-      info.storeName=store; info.description=desc; info.toAddress=w.querySelector("#notes").value.trim();
+      const store=w.querySelector("#store").value.trim(), desc=w.querySelector("#desc").value.trim();
+      if(!store||!desc){alert("Enter store and what to bring.");return}
+      info.storeName=store; info.description=desc;
     }
-    info.photoUrl=photoDataUrl.slice(0, 200000);
+    info.photoUrl=photoDataUrl.slice(0,200000);
 
-    state.packageInfo=info;
-    state.vendor=null;
-    state.deliveryType="package";
-
-    // fee
     const f=zoneFee();
-    const st=0;
-    const total=f;
-
     const orderData={
       userKey:state.user.key, name:n, phone:p,
-      address: mode==="send" ? info.toAddress : info.toAddress,
+      address: mode==="send" ? info.toAddress : "",
       zone:state.zone, payment:state.payment,
       vendor: mode==="send" ? "Package Delivery" : "Errand — "+info.storeName,
       type:"package",
       items: [],
       currency:state.currency,
       subtotal:0, deliveryFee:f, deliveryFeeRaw:f, freeDelivery:false,
-      total:total,
+      total:f,
       status:"pending",
-      driver:DRIVER_NAME, driverPhone:DRIVER_PHONE,
+      driverId:null, driverName:null, driverPhone:null,
       packageInfo: info,
       createdAt:serverTimestamp()
     };
@@ -814,18 +602,15 @@ function viewPackage(){
       w.querySelector("#submit").textContent="Submitting…";
       const ref=await addDoc(collection(db,"orders"), orderData);
       if(state.payment==="wallet"){
-        const newBalance = state.wallet.balance - total;
-        if(newBalance<0){ alert("Wallet insufficient."); w.querySelector("#submit").textContent="Submit Request"; return }
-        await updateDoc(doc(db,"customers",state.user.key), { balance:newBalance });
+        const nb = state.wallet.balance - f;
+        if(nb<0){ alert("Wallet insufficient."); w.querySelector("#submit").textContent="Submit Request"; return }
+        await updateDoc(doc(db,"customers",state.user.key), { balance:nb });
         await loadWallet();
       }
       const order={ ...orderData, id:"LS-"+ref.id.slice(-6).toUpperCase(), docId:ref.id, createdAt:new Date().toISOString() };
-      state.currentOrder=order; state.packageInfo=null; state.deliveryType="food";
+      state.currentOrder=order; state.packageInfo=null;
       state.screen="confirm"; render();
-    }catch(e){
-      alert("Failed: "+e.message);
-      w.querySelector("#submit").textContent="Submit Request";
-    }
+    }catch(e){ alert("Failed: "+e.message); w.querySelector("#submit").textContent="Submit Request" }
   };
   return w;
 }
@@ -838,27 +623,20 @@ function viewConfirm(){
       <h2>Order Placed!</h2>
       <p style="margin-top:6px;">Order ID: <b>${o.id}</b></p>
       <p style="margin-top:4px;color:#c8102e;font-weight:700;">Waiting for admin approval…</p>
-      <p class="small" style="margin-top:4px;">We've sent it to ${esc(o.vendor)}.</p>
     </div>
-    <div class="card"><h2>Driver Assigned (once accepted)</h2>
-      <p style="margin-top:6px;">👤 <b>${esc(o.driver)}</b> will deliver your order.</p>
-      <a class="btn" style="margin-top:12px;" href="tel:${o.driverPhone}">📞 Call ${esc(o.driver)}</a>
+    <div class="card"><h2>Driver</h2>
+      <p class="small">Assigned by admin once accepted.</p>
     </div>
-    <div class="card"><h2>Order Summary</h2><div id="s"></div>
+    <div class="card"><h2>Summary</h2><div id="s"></div>
       <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal,cur)}</span></div>
       <div class="order-line"><span>Delivery Fee</span><span>${o.freeDelivery?"FREE":money(o.deliveryFee,cur)}</span></div>
       <div class="order-total"><span>Total</span><span>${money(o.total,cur)}</span></div>
-      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"💵 Cash on Delivery":o.payment==="whish"?"📱 Whish Money":"💰 Wallet"} · Zone: ${esc(o.zone)}</p>
     </div>
     <button class="btn" id="track">Track Order</button>
-    <button class="btn btn-secondary btn-small" id="home">Back to Home</button>
+    <button class="btn btn-secondary btn-small" id="home">Home</button>
   </div>`);
   const s=w.querySelector("#s");
-  if(o.items && o.items.length){
-    o.items.forEach(i=>s.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty,cur)}</span></div>`)));
-  } else if(o.packageInfo){
-    s.appendChild(el(`<div class="order-line"><span>${o.packageInfo.mode==="send"?"📦 Package delivery":"🏪 Errand"}</span><span></span></div>`));
-  }
+  if(o.items && o.items.length) o.items.forEach(i=>s.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty,cur)}</span></div>`)));
   w.querySelector("#track").onclick=()=>{ state.screen="track"; render() };
   w.querySelector("#home").onclick=()=>{ state.screen="home"; render() };
   return w;
@@ -871,25 +649,31 @@ function viewTrack(){
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
     <div class="card"><h2>Order ${o.id}</h2>
       <p style="margin-top:6px;">Status: <span class="pill ${o.status}" id="liveStatus">${statusLabel(o.status)}</span></p>
-      <p style="margin-top:6px;">Driver: <b>${esc(o.driver)}</b></p>
-      <a class="btn" style="margin-top:10px;" href="tel:${o.driverPhone}">📞 Call Driver</a>
-    </div>
-    <div class="card"><h2>🗺️ Map</h2>
-      <p>Live driver location will appear here (next step).</p>
-      <a class="btn btn-secondary btn-small" style="margin-top:10px;" href="https://maps.google.com/?q=${encodeURIComponent(o.zone+', Bekaa, Lebanon')}" target="_blank">Open Zone in Google Maps</a>
+      <div id="driverBox"></div>
+      <a class="btn btn-secondary btn-small" style="margin-top:10px;" href="https://maps.google.com/?q=${encodeURIComponent(o.zone+', Bekaa, Lebanon')}" target="_blank">🗺️ Zone on Maps</a>
     </div>
   </div>`);
+  const paintDriver=(data)=>{
+    const box=w.querySelector("#driverBox"); box.innerHTML="";
+    if(data.driverName && data.driverPhone){
+      box.appendChild(el(`<p style="margin-top:6px;">Driver: <b>${esc(data.driverName)}</b></p>`));
+      const a=el(`<a class="btn" style="margin-top:10px;" href="tel:${data.driverPhone}">📞 Call ${esc(data.driverName)}</a>`);
+      box.appendChild(a);
+    } else {
+      box.appendChild(el(`<p class="small">Driver will be assigned soon.</p>`));
+    }
+  };
+  paintDriver(o);
   w.querySelector("#b").onclick=()=>{ state.screen="confirm"; render() };
   if(o.docId){
-    try{
-      const unsub=onSnapshot(doc(db,"orders",o.docId), (snap)=>{
-        if(!snap.exists()) return;
-        const data=snap.data();
-        const pill=w.querySelector("#liveStatus");
-        if(pill){ pill.className="pill "+data.status; pill.textContent=statusLabel(data.status); }
-      });
-      setTimeout(()=>{ try{unsub()}catch(e){} }, 300000);
-    }catch(e){ console.warn(e) }
+    const unsub=onSnapshot(doc(db,"orders",o.docId), (snap)=>{
+      if(!snap.exists()) return;
+      const d=snap.data();
+      const pill=w.querySelector("#liveStatus");
+      if(pill){ pill.className="pill "+d.status; pill.textContent=statusLabel(d.status); }
+      paintDriver(d);
+    });
+    setTimeout(()=>{ try{unsub()}catch(e){} }, 300000);
   }
   return w;
 }
@@ -897,8 +681,8 @@ function viewTrack(){
 function viewMyOrders(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>My Orders</h2><p>Your past orders appear here.</p></div>
-    <div id="list"><div class="loading">Loading orders…</div></div>
+    <div class="card"><h2>My Orders</h2></div>
+    <div id="list"><div class="loading">Loading…</div></div>
   </div>`);
   const list=w.querySelector("#list");
   w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
@@ -917,10 +701,7 @@ function viewMyOrders(){
         c.onclick=()=>{ state.currentOrder=o; state.screen="track"; render() };
         list.appendChild(c);
       });
-    }catch(e){
-      list.innerHTML="";
-      list.appendChild(el(`<div class="card center"><p>Could not load orders: ${esc(e.message)}</p></div>`));
-    }
+    }catch(e){ list.innerHTML=""; list.appendChild(el(`<div class="card center"><p>Error: ${esc(e.message)}</p></div>`)) }
   })();
   return w;
 }
@@ -930,17 +711,14 @@ function viewWallet(){
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
     <div class="card"><h2>💵 My Wallet</h2>
       <p style="margin-top:10px;font-size:22px;font-weight:700;">$${state.wallet.balance.toFixed(2)}</p>
-      <p class="small">Balance is in USD. When you pay from wallet, we convert automatically.</p>
     </div>
-    <div class="card"><h2>🎁 Loyalty Tokens</h2>
+    <div class="card"><h2>🎁 Loyalty</h2>
       <p style="margin-top:10px;font-size:22px;font-weight:700;">${state.wallet.tokens} LS</p>
-      <p class="small">Every $100+ order earns you 20 LS Tokens. Every 20 tokens = 1 free delivery (any zone).</p>
+      <p class="small">Every $100+ order = 20 tokens. 20 tokens = free delivery any zone.</p>
     </div>
-    <button class="btn" id="tu">Top up Wallet</button>
-    <button class="btn btn-secondary btn-small" id="mo">My Orders</button>
+    <button class="btn" id="tu">Top up</button>
   </div>`);
   w.querySelector("#tu").onclick=()=>{ state.screen="topup"; render() };
-  w.querySelector("#mo").onclick=()=>{ state.screen="myOrders"; render() };
   w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
   return w;
 }
@@ -948,18 +726,14 @@ function viewWallet(){
 function viewTopUp(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>Top Up Wallet</h2>
-      <p>Minimum top-up: $10.</p>
-      <div class="input-group"><label>Amount (USD)</label><input id="amt" type="number" min="10" step="1" placeholder="10"></div>
-      <div class="input-group"><label>Method</label>
-        <div class="payment-grid" id="mg">
-          <button data-m="whish" class="selected">📱 Whish Money</button>
-          <button data-m="visa">💳 Visa (Coming soon)</button>
-        </div>
+    <div class="card"><h2>Top Up</h2>
+      <div class="input-group"><label>Amount (USD, min 10)</label><input id="amt" type="number" min="10" step="1" placeholder="10"></div>
+      <div class="payment-grid" id="mg">
+        <button data-m="whish" class="selected">📱 Whish</button>
+        <button data-m="visa">💳 Visa (soon)</button>
       </div>
       <div id="howto"></div>
       <button class="btn" id="send">Request Top-Up</button>
-      <p class="small" style="margin-top:10px;">After you send the money, admin will credit your wallet. You'll see it here.</p>
     </div>
   </div>`);
   let method="whish";
@@ -967,16 +741,12 @@ function viewTopUp(){
   const paintHow=()=>{
     if(method==="whish"){
       howto.innerHTML=`<div class="card" style="background:#fff8f9;">
-        <h2 style="color:#c8102e;">Send by Whish</h2>
-        <p style="margin-top:8px;">1. Open Whish Money app.<br>2. Send the amount to <b>${WHISH_NUMBER}</b>.<br>3. Tap "Request Top-Up" below.</p>
-        <a class="btn btn-small" style="margin-top:8px;" href="https://wa.me/961${WHATSAPP_NUMBER.replace(/^0+/,"")}?text=Hi%20La-Sobeh%2C%20I%20want%20to%20top%20up%20my%20wallet" target="_blank">📲 Message on WhatsApp</a>
-      </div>`;
+        <p>Send <b>$amount</b> by Whish to <b>${WHISH_NUMBER}</b>, then tap Request.</p>
+        <a class="btn btn-small" style="margin-top:8px;" href="https://wa.me/961${WHATSAPP_NUMBER.replace(/^0+/,"")}" target="_blank">📲 WhatsApp</a></div>`;
     } else {
       howto.innerHTML=`<div class="card" style="background:#f5f5f7;">
-        <h2>Visa / Card</h2>
-        <p style="margin-top:8px;">Card payments are coming soon. For now, please contact the holder on WhatsApp to pay by card or arrange another method.</p>
-        <a class="btn btn-small" style="margin-top:8px;" href="https://wa.me/961${WHATSAPP_NUMBER.replace(/^0+/,"")}?text=Hi%20La-Sobeh%2C%20I%20want%20to%20pay%20by%20card" target="_blank">📲 Contact on WhatsApp</a>
-      </div>`;
+        <p>Visa coming soon. Contact holder on WhatsApp to pay by card.</p>
+        <a class="btn btn-small" style="margin-top:8px;" href="https://wa.me/961${WHATSAPP_NUMBER.replace(/^0+/,"")}" target="_blank">📲 WhatsApp</a></div>`;
     }
   };
   w.querySelector("#mg").querySelectorAll("button").forEach(btn=>{
@@ -986,23 +756,137 @@ function viewTopUp(){
   w.querySelector("#b").onclick=()=>{ state.screen="wallet"; render() };
   w.querySelector("#send").onclick=async ()=>{
     const amt=parseFloat(w.querySelector("#amt").value);
-    if(!amt || amt<10){alert("Minimum top-up is $10.");return}
+    if(!amt || amt<10){alert("Min $10.");return}
     try{
-      await addDoc(collection(db,"topups"), {
-        userKey:state.user.key, name:state.user.name, phone:state.user.phone,
-        amount:amt, method:method, status:"pending", createdAt:serverTimestamp()
-      });
-      alert("Request sent. Admin will credit your wallet after confirming receipt.");
+      await addDoc(collection(db,"topups"), { userKey:state.user.key, name:state.user.name, phone:state.user.phone, amount:amt, method, status:"pending", createdAt:serverTimestamp() });
+      alert("Request sent.");
       state.screen="wallet"; render();
     }catch(e){ alert("Failed: "+e.message) }
   };
   return w;
 }
 
+/* ---------- DRIVER LOGIN + HOME ---------- */
+
+function viewDriverLogin(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <img class="login-logo" src="la-sobeh-logo.png.jpg.jpg" onerror="this.style.display='none'">
+    <div class="card"><h2>🚗 Driver Login</h2><p>Enter your phone and PIN.</p></div>
+    <div class="card">
+      <div class="input-group"><label>Phone</label><input id="dp" type="tel" placeholder="03 033 331"></div>
+      <div class="input-group"><label>PIN</label><input id="dc" type="tel" maxlength="6" placeholder="••••" style="text-align:center;letter-spacing:6px;"></div>
+      <button class="btn" id="db">Login</button>
+    </div>
+  </div>`);
+  w.querySelector("#b").onclick=()=>{ state.screen="login"; render() };
+  w.querySelector("#db").onclick=async ()=>{
+    const p=w.querySelector("#dp").value.trim(), c=w.querySelector("#dc").value.trim();
+    if(!p||!c){alert("Enter phone and PIN.");return}
+    const key=phoneKey(p);
+    try{
+      const snap=await getDoc(doc(db,"drivers",key));
+      if(!snap.exists()){ alert("Driver not found."); return }
+      const d=snap.data();
+      if(d.pin!==c){ alert("Wrong PIN."); return }
+      if(d.active===false){ alert("Account disabled."); return }
+      state.role="driver";
+      state.driver={ key, name:d.name, phone:d.phone, pin:d.pin };
+      setSession({ role:"driver", driver:state.driver });
+      state.screen="driverHome"; render();
+    }catch(e){ alert("Error: "+e.message) }
+  };
+  return w;
+}
+
+function viewDriverHome(){
+  const w=el(`<div>
+    <div class="card"><h2>Hi ${esc(state.driver.name)} 🚗</h2>
+      <p>You are logged in as a driver.</p>
+    </div>
+    <button class="btn btn-secondary btn-small" id="lo">Logout</button>
+    <div class="card"><h2>My Assigned Orders</h2></div>
+    <div id="list"><div class="loading">Loading…</div></div>
+  </div>`);
+  const list=w.querySelector("#list");
+  w.querySelector("#lo").onclick=()=>{ state.driver=null; state.role="customer"; setSession(null); state.screen="login"; render() };
+  try{
+    const q=query(collection(db,"orders"), where("driverId","==",state.driver.key));
+    const unsub=onSnapshot(q, (snap)=>{
+      list.innerHTML="";
+      if(snap.empty){ list.appendChild(el(`<div class="card center"><p>No orders assigned to you.</p></div>`)); return }
+      const arr=snap.docs.map(d=>({ ...d.data(), docId:d.id, id:"LS-"+d.id.slice(-6).toUpperCase() }));
+      arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+      arr.forEach(o=>{
+        const cls = (o.status==="accepted" || o.status==="preparing" || o.status==="ontheway") ? "order-card driver-highlight" : "order-card";
+        const c=el(`<div class="${cls}"><div class="top"><span class="id">${o.id}</span><span class="pill ${o.status}">${statusLabel(o.status)}</span></div>
+          <div class="name">${esc(o.name)} — ${esc(o.vendor)}</div>
+          <div class="meta">📍 ${esc(o.zone)} · ${money(o.total,o.currency||"LL")} · ${o.payment}</div></div>`);
+        c.onclick=()=>{ state.currentOrder=o; state.screen="driverOrder"; render() };
+        list.appendChild(c);
+      });
+    }, (err)=>{ list.innerHTML=""; list.appendChild(el(`<div class="card center"><p>Error: ${esc(err.message)}</p></div>`)) });
+    state.unsub=unsub;
+  }catch(e){ list.innerHTML=""; list.appendChild(el(`<div class="card center"><p>Error: ${esc(e.message)}</p></div>`)) }
+  return w;
+}
+
+function viewDriverOrder(){
+  const o=state.currentOrder;
+  const cur=o.currency||"LL";
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>Order ${o.id}</h2>
+      <p style="margin-top:6px;">Status: <span class="pill ${o.status}">${statusLabel(o.status)}</span></p>
+      <p style="margin-top:6px;">Customer: <b>${esc(o.name)}</b></p>
+      <p>📞 ${esc(o.phone)}</p>
+      <p>📍 ${esc(o.zone)}</p>
+      <p style="margin-top:6px;">${esc(o.address)}</p>
+      <a class="btn" style="margin-top:8px;" href="tel:${o.phone}">📞 Call Customer</a>
+      <a class="btn btn-secondary btn-small" style="margin-top:6px;" href="https://maps.google.com/?q=${encodeURIComponent(o.zone+', Bekaa, Lebanon')}" target="_blank">🗺️ Open in Google Maps</a>
+    </div>
+    ${o.packageInfo?`<div class="card"><h2>📦 Details</h2>
+      ${o.packageInfo.fromAddress?`<p>From: ${esc(o.packageInfo.fromAddress)}</p>`:""}
+      ${o.packageInfo.toAddress?`<p>To: ${esc(o.packageInfo.toAddress)}</p>`:""}
+      ${o.packageInfo.storeName?`<p>Store: ${esc(o.packageInfo.storeName)}</p>`:""}
+      ${o.packageInfo.description?`<p>Notes: ${esc(o.packageInfo.description)}</p>`:""}
+      ${o.packageInfo.photoUrl?`<img class="photo-preview" src="${o.packageInfo.photoUrl}">`:""}
+    </div>`:""}
+    <div class="card"><h2>Items</h2><div id="it"></div>
+      <div class="order-line" style="margin-top:8px;"><span>Total to collect</span><span>${money(o.total,cur)}</span></div>
+      <p class="small">Payment method: ${o.payment==="cod"?"Cash on delivery":o.payment==="whish"?"Whish (already paid?)":"Wallet (already paid)"}</p>
+    </div>
+    <div class="card"><h2>Actions</h2>
+      ${o.status==="accepted"?`<button class="btn btn-green" id="acc">✓ Accept Order</button>
+        <button class="btn btn-red" id="dec">✗ Decline</button>`:""}
+      ${o.status==="preparing"?`<button class="btn" id="otw">🚗 On the way</button>`:""}
+      ${o.status==="ontheway"?`<button class="btn btn-green" id="del">✅ Delivered</button>`:""}
+    </div>
+  </div>`);
+  const it=w.querySelector("#it");
+  if(o.items && o.items.length) o.items.forEach(i=>it.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty,cur)}</span></div>`)));
+  else it.appendChild(el(`<p class="small">No items (package).</p>`));
+
+  const acc=w.querySelector("#acc"), dec=w.querySelector("#dec"), otw=w.querySelector("#otw"), del=w.querySelector("#del");
+  if(acc) acc.onclick=async ()=>{ await updateDoc(doc(db,"orders",o.docId), { status:"preparing" }); state.currentOrder={ ...o, status:"preparing" }; render() };
+  if(dec) dec.onclick=async ()=>{
+    if(!confirm("Decline this order?")) return;
+    await updateDoc(doc(db,"orders",o.docId), { status:"accepted", driverId:null, driverName:null, driverPhone:null });
+    state.screen="driverHome"; render();
+  };
+  if(otw) otw.onclick=async ()=>{ await updateDoc(doc(db,"orders",o.docId), { status:"ontheway" }); state.currentOrder={ ...o, status:"ontheway" }; render() };
+  if(del) del.onclick=async ()=>{ await updateDoc(doc(db,"orders",o.docId), { status:"delivered" }); state.currentOrder={ ...o, status:"delivered" }; render() };
+
+  w.querySelector("#b").onclick=()=>{ state.screen="driverHome"; render() };
+  return w;
+}
+
+/* ---------- ADMIN ---------- */
+
 function viewAdminLogin(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>Admin Login</h2><p>Enter PIN to access the admin panel.</p></div>
+    <div class="card"><h2>Admin Login</h2><p>Enter PIN.</p></div>
     <div class="card">
       <div class="input-group"><label>PIN</label><input id="pin" type="tel" maxlength="6" placeholder="••••" style="font-size:22px;letter-spacing:8px;text-align:center;"></div>
       <button class="btn" id="ab">Enter Admin Panel</button>
@@ -1011,6 +895,7 @@ function viewAdminLogin(){
   w.querySelector("#ab").onclick=()=>{
     const pin=w.querySelector("#pin").value.trim();
     if(pin!==ADMIN_PIN){alert("Wrong PIN.");return}
+    state.role="admin"; setSession({ role:"admin" });
     state.screen="admin"; render();
   };
   w.querySelector("#b").onclick=()=>{ state.screen="login"; render() };
@@ -1019,22 +904,22 @@ function viewAdminLogin(){
 
 function viewAdmin(){
   const w=el(`<div>
-    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Exit Admin</button>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Exit</button>
     <div class="card"><h2>🔐 Admin — Live Orders</h2>
-      <p class="small">New pending orders have a red bar. Tap "Accept" or "Reject".</p>
+      <p class="small">Red = new pending. Tap to open, Accept/Reject + assign driver.</p>
     </div>
-    <div class="card">
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary btn-small" style="flex:1;" id="aw">Wallets</button>
-        <button class="btn btn-secondary btn-small" style="flex:1;" id="as">Totals</button>
-      </div>
-    </div>
-    <div id="list"><div class="loading">Loading orders…</div></div>
+    <div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-secondary btn-small" style="flex:1;" id="aw">Wallets</button>
+      <button class="btn btn-secondary btn-small" style="flex:1;" id="as">Totals</button>
+      <button class="btn btn-secondary btn-small" style="flex:1;" id="ad">Drivers</button>
+    </div></div>
+    <div id="list"><div class="loading">Loading…</div></div>
   </div>`);
   const list=w.querySelector("#list");
   w.querySelector("#b").onclick=()=>{ state.screen="home"; render() };
   w.querySelector("#aw").onclick=()=>{ state.screen="adminWallet"; render() };
   w.querySelector("#as").onclick=()=>{ state.screen="adminStats"; render() };
+  w.querySelector("#ad").onclick=()=>{ state.screen="adminDrivers"; render() };
   try{
     const q=query(collection(db,"orders"), orderBy("createdAt","desc"));
     const unsub=onSnapshot(q, (snap)=>{
@@ -1045,29 +930,19 @@ function viewAdmin(){
         const cls = o.status==="pending" ? "order-card pending-highlight" : "order-card";
         const c=el(`<div class="${cls}"><div class="top"><span class="id">${o.id}</span><span class="pill ${o.status}">${statusLabel(o.status)}</span></div>
           <div class="name">${esc(o.name)} — ${esc(o.vendor)}</div>
-          <div class="meta">${esc(o.zone)} · ${money(o.total,o.currency||"LL")} · ${o.payment==="cod"?"COD":o.payment==="whish"?"Whish":"Wallet"}</div>
-          ${o.status==="pending"?`<div style="display:flex;gap:8px;margin-top:10px;">
-            <button class="btn btn-small" style="flex:1;background:#28a745;" data-act="accept">✓ Accept</button>
-            <button class="btn btn-small" style="flex:1;background:#dc3545;" data-act="reject">✗ Reject</button>
-          </div>`:""}
-        </div>`);
-        const ac=c.querySelector('[data-act="accept"]');
-        const rj=c.querySelector('[data-act="reject"]');
-        if(ac) ac.onclick=async (ev)=>{ ev.stopPropagation(); await updateDoc(doc(db,"orders",o.docId), { status:"accepted" }) };
-        if(rj) rj.onclick=async (ev)=>{ ev.stopPropagation(); await updateDoc(doc(db,"orders",o.docId), { status:"rejected" }) };
+          <div class="meta">${esc(o.zone)} · ${money(o.total,o.currency||"LL")} · ${o.payment}${o.driverName?" · 🚗 "+esc(o.driverName):""}</div></div>`);
         c.onclick=()=>{ state.currentOrder=o; state.screen="adminOrder"; render() };
         list.appendChild(c);
       });
-    }, (err)=>{
-      list.innerHTML="";
-      list.appendChild(el(`<div class="card center"><p>Error: ${esc(err.message)}</p></div>`));
-    });
+    }, (err)=>{ list.innerHTML=""; list.appendChild(el(`<div class="card center"><p>Error: ${esc(err.message)}</p></div>`)) });
     state.unsub=unsub;
-  }catch(e){
-    list.innerHTML="";
-    list.appendChild(el(`<div class="card center"><p>Error: ${esc(e.message)}</p></div>`));
-  }
+  }catch(e){ list.innerHTML=""; list.appendChild(el(`<div class="card center"><p>Error: ${esc(e.message)}</p></div>`)) }
   return w;
+}
+
+async function loadDrivers(){
+  const snap=await getDocs(collection(db,"drivers"));
+  return snap.docs.map(d=>({ ...d.data(), key:d.id }));
 }
 
 function viewAdminOrder(){
@@ -1082,8 +957,7 @@ function viewAdminOrder(){
       <p style="margin-top:6px;">${esc(o.address)}</p>
       <a class="btn btn-small" style="margin-top:8px;" href="tel:${o.phone}">📞 Call Customer</a>
     </div>
-    ${o.packageInfo?`<div class="card"><h2>📦 Package Info</h2>
-      <p><b>${o.packageInfo.mode==="send"?"Send":"Bring"}</b></p>
+    ${o.packageInfo?`<div class="card"><h2>📦 Package</h2>
       ${o.packageInfo.fromAddress?`<p>From: ${esc(o.packageInfo.fromAddress)}</p>`:""}
       ${o.packageInfo.toAddress?`<p>To: ${esc(o.packageInfo.toAddress)}</p>`:""}
       ${o.packageInfo.storeName?`<p>Store: ${esc(o.packageInfo.storeName)}</p>`:""}
@@ -1094,46 +968,103 @@ function viewAdminOrder(){
       <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal,cur)}</span></div>
       <div class="order-line"><span>Delivery Fee</span><span>${o.freeDelivery?"FREE":money(o.deliveryFee,cur)}</span></div>
       <div class="order-total"><span>Total</span><span>${money(o.total,cur)}</span></div>
-      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"COD":o.payment==="whish"?"Whish ("+WHISH_NUMBER+")":"Wallet"}</p>
+      <p class="small" style="margin-top:8px;">Payment: ${o.payment}</p>
+    </div>
+    <div class="card"><h2>Assign Driver</h2>
+      <div class="input-group"><select id="drv"><option value="">— Not assigned —</option></select></div>
+      <button class="btn btn-small" id="saveDrv">Save Driver</button>
+      <p class="small" style="margin-top:8px;">Current: ${o.driverName?esc(o.driverName)+" ("+esc(o.driverPhone)+")":"none"}</p>
     </div>
     <div class="card"><h2>Status</h2>
       <div class="payment-grid" id="st">
-        <button data-s="pending"${o.status==="pending"?' class="selected"':""}>Pending</button>
-        <button data-s="accepted"${o.status==="accepted"?' class="selected"':""}>Accepted</button>
-        <button data-s="preparing"${o.status==="preparing"?' class="selected"':""}>Preparing</button>
-        <button data-s="ontheway"${o.status==="ontheway"?' class="selected"':""}>On the way</button>
-        <button data-s="delivered"${o.status==="delivered"?' class="selected"':""}>Delivered</button>
-        <button data-s="rejected"${o.status==="rejected"?' class="selected"':""}>Rejected</button>
+        ${["pending","accepted","preparing","ontheway","delivered","rejected"].map(s=>`<button data-s="${s}"${o.status===s?' class="selected"':""}>${statusLabel(s)}</button>`).join("")}
       </div>
     </div>
   </div>`);
   const it=w.querySelector("#it");
-  if(o.items && o.items.length){
-    o.items.forEach(i=>it.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty,cur)}</span></div>`)));
-  } else {
-    it.appendChild(el(`<p class="small">No items (package delivery).</p>`));
-  }
+  if(o.items && o.items.length) o.items.forEach(i=>it.appendChild(el(`<div class="order-line"><span>${i.qty}× ${esc(i.name)}</span><span>${money(i.price*i.qty,cur)}</span></div>`)));
+  else it.appendChild(el(`<p class="small">No items.</p>`));
+
+  const drv=w.querySelector("#drv");
+  (async ()=>{
+    const drivers=await loadDrivers();
+    drivers.forEach(d=>{
+      const opt=document.createElement("option");
+      opt.value=d.key; opt.textContent=d.name+" ("+d.phone+")";
+      if(o.driverId===d.key) opt.selected=true;
+      drv.appendChild(opt);
+    });
+  })();
+  w.querySelector("#saveDrv").onclick=async ()=>{
+    const key=drv.value;
+    if(!key){ await updateDoc(doc(db,"orders",o.docId), { driverId:null, driverName:null, driverPhone:null }); alert("Unassigned"); return }
+    const drivers=await loadDrivers();
+    const d=drivers.find(x=>x.key===key);
+    if(!d) return;
+    await updateDoc(doc(db,"orders",o.docId), { driverId:d.key, driverName:d.name, driverPhone:d.phone });
+    alert("Assigned to "+d.name);
+    state.currentOrder={ ...o, driverId:d.key, driverName:d.name, driverPhone:d.phone };
+    state.screen="adminOrder"; render();
+  };
   w.querySelector("#st").querySelectorAll("button").forEach(btn=>{
     btn.onclick=async ()=>{
-      try{
-        await updateDoc(doc(db,"orders",o.docId), { status:btn.dataset.s });
-        state.currentOrder={ ...o, status:btn.dataset.s };
-        state.screen="adminOrder"; render();
-      }catch(e){ alert("Failed: "+e.message) }
+      await updateDoc(doc(db,"orders",o.docId), { status:btn.dataset.s });
+      state.currentOrder={ ...o, status:btn.dataset.s };
+      state.screen="adminOrder"; render();
     };
   });
   w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
   return w;
 }
 
+function viewAdminDrivers(){
+  const w=el(`<div>
+    <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
+    <div class="card"><h2>🚗 Drivers</h2>
+      <div class="input-group"><label>Name</label><input id="dn" placeholder="e.g. Mizo"></div>
+      <div class="input-group"><label>Phone</label><input id="dp" type="tel" placeholder="03 033 331"></div>
+      <div class="input-group"><label>PIN (4 digits)</label><input id="dc" type="tel" maxlength="6" placeholder="1111"></div>
+      <button class="btn btn-small" id="add">Add / Update Driver</button>
+    </div>
+    <div id="list"><div class="loading">Loading…</div></div>
+  </div>`);
+  w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
+  const list=w.querySelector("#list");
+  const paint=async ()=>{
+    const drivers=await loadDrivers();
+    list.innerHTML="";
+    if(!drivers.length){ list.appendChild(el(`<div class="card center"><p>No drivers yet.</p></div>`)); return }
+    drivers.forEach(d=>{
+      const c=el(`<div class="card"><p><b>${esc(d.name)}</b> — ${esc(d.phone)}</p>
+        <p class="small">PIN: ${esc(d.pin||"?")} · ${d.active===false?"DISABLED":"active"}</p>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn btn-small btn-secondary" style="flex:1;" data-t="toggle">${d.active===false?"Enable":"Disable"}</button>
+          <button class="btn btn-small btn-red" style="flex:1;" data-t="del">Delete</button>
+        </div></div>`);
+      c.querySelector('[data-t="toggle"]').onclick=async ()=>{ await updateDoc(doc(db,"drivers",d.key), { active: d.active===false }); paint() };
+      c.querySelector('[data-t="del"]').onclick=async ()=>{ if(!confirm("Delete driver "+d.name+"?")) return; await deleteDoc(doc(db,"drivers",d.key)); paint() };
+      list.appendChild(c);
+    });
+  };
+  w.querySelector("#add").onclick=async ()=>{
+    const n=w.querySelector("#dn").value.trim(), p=w.querySelector("#dp").value.trim(), c=w.querySelector("#dc").value.trim();
+    if(!n||!p||!c){alert("Fill all fields.");return}
+    if(c.length<4){alert("PIN must be at least 4 digits.");return}
+    const key=phoneKey(p);
+    await setDoc(doc(db,"drivers",key), { name:n, phone:p, pin:c, active:true, createdAt:serverTimestamp() });
+    alert("Driver saved.");
+    w.querySelector("#dn").value=""; w.querySelector("#dp").value=""; w.querySelector("#dc").value="";
+    paint();
+  };
+  paint();
+  return w;
+}
+
 function viewAdminWallet(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>💰 Credit Customer Wallet</h2>
-      <p class="small">When a customer sends you money via Whish, credit their wallet here.</p>
-    </div>
-    <div class="card">
-      <div class="input-group"><label>Customer Phone</label><input id="cp" type="tel" placeholder="70 123 456"></div>
+    <div class="card"><h2>💰 Credit Customer</h2>
+      <div class="input-group"><label>Phone</label><input id="cp" type="tel"></div>
       <button class="btn btn-secondary btn-small" id="look">Look Up</button>
       <div id="found"></div>
     </div>
@@ -1141,54 +1072,43 @@ function viewAdminWallet(){
   </div>`);
   w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
   const found=w.querySelector("#found");
-  let foundKey=null;
   w.querySelector("#look").onclick=async ()=>{
     const key=phoneKey(w.querySelector("#cp").value);
-    if(!key){return}
+    if(!key) return;
     found.innerHTML="<p class='small'>Searching…</p>";
     const snap=await getDoc(doc(db,"customers",key));
-    if(!snap.exists()){ found.innerHTML="<p class='small'>No customer found.</p>"; return }
-    foundKey=key;
+    if(!snap.exists()){ found.innerHTML="<p class='small'>Not found.</p>"; return }
     const d=snap.data();
     found.innerHTML=`<div class="card"><p><b>${esc(d.name)}</b></p>
       <p class="small">Balance: $${(d.balance||0).toFixed(2)} · Tokens: ${d.tokens||0}</p>
-      <div class="input-group" style="margin-top:10px;"><label>Add to wallet (USD)</label><input id="amt" type="number" min="1" step="1"></div>
+      <div class="input-group" style="margin-top:10px;"><label>Add (USD)</label><input id="amt" type="number" min="1" step="1"></div>
       <div class="input-group"><label>Add tokens</label><input id="tk" type="number" min="0" step="1" value="0"></div>
-      <button class="btn" id="credit">Credit Wallet</button></div>`;
+      <button class="btn" id="credit">Credit</button></div>`;
     found.querySelector("#credit").onclick=async ()=>{
       const amt=parseFloat(found.querySelector("#amt").value)||0;
       const tk=parseInt(found.querySelector("#tk").value)||0;
-      const cur=await getDoc(doc(db,"customers",key));
-      const cd=cur.data();
+      const cur=await getDoc(doc(db,"customers",key)), cd=cur.data();
       await updateDoc(doc(db,"customers",key), { balance:(cd.balance||0)+amt, tokens:(cd.tokens||0)+tk });
-      alert("Credited.");
-      w.querySelector("#look").click();
+      alert("Credited."); w.querySelector("#look").click();
     };
   };
-
-  // pending topups
   (async ()=>{
     const box=w.querySelector("#pending");
-    box.innerHTML="<h2 style='margin:12px 0 6px;font-size:15px;'>Pending Top-Up Requests</h2><div class='loading'>Loading…</div>";
-    const q=query(collection(db,"topups"), where("status","==","pending"));
-    const snap=await getDocs(q);
-    box.innerHTML="<h2 style='margin:12px 0 6px;font-size:15px;'>Pending Top-Up Requests</h2>";
-    if(snap.empty){ box.appendChild(el(`<p class='small'>No pending requests.</p>`)); return }
+    box.innerHTML="<h2 style='margin:12px 0 6px;font-size:15px;'>Pending Top-Ups</h2><div class='loading'>Loading…</div>";
+    const snap=await getDocs(query(collection(db,"topups"), where("status","==","pending")));
+    box.innerHTML="<h2 style='margin:12px 0 6px;font-size:15px;'>Pending Top-Ups</h2>";
+    if(snap.empty){ box.appendChild(el(`<p class='small'>None.</p>`)); return }
     snap.forEach(d=>{
       const t=d.data();
       const card=el(`<div class="card"><p><b>${esc(t.name)}</b> — ${esc(t.phone)}</p>
-        <p class="small">Amount: $${t.amount} · Method: ${t.method}</p>
-        <button class="btn btn-small" style="margin-top:8px;">✓ Credit & Mark Done</button></div>`);
+        <p class="small">$${t.amount} · ${t.method}</p>
+        <button class="btn btn-small btn-green" style="margin-top:8px;">✓ Credit & Mark Done</button></div>`);
       card.querySelector("button").onclick=async ()=>{
         const key=phoneKey(t.phone);
         const cur=await getDoc(doc(db,"customers",key));
-        if(cur.exists()){
-          const cd=cur.data();
-          await updateDoc(doc(db,"customers",key), { balance:(cd.balance||0)+t.amount });
-        }
+        if(cur.exists()){ const cd=cur.data(); await updateDoc(doc(db,"customers",key), { balance:(cd.balance||0)+t.amount }) }
         await updateDoc(doc(db,"topups",d.id), { status:"done" });
-        alert("Credited $"+t.amount);
-        state.screen="adminWallet"; render();
+        alert("Credited $"+t.amount); state.screen="adminWallet"; render();
       };
       box.appendChild(card);
     });
@@ -1204,13 +1124,11 @@ function viewAdminStats(){
   w.querySelector("#b").onclick=()=>{ state.screen="admin"; render() };
   (async ()=>{
     const box=w.querySelector("#stats");
-    const q=query(collection(db,"orders"));
-    const snap=await getDocs(q);
+    const snap=await getDocs(collection(db,"orders"));
     let today=0, week=0, all=0, count=0;
     const now=Date.now();
     snap.forEach(d=>{
-      const o=d.data();
-      count++;
+      const o=d.data(); count++;
       const totalUSD = o.currency==="USD" ? o.total : (o.total/USD_RATE);
       const t = o.createdAt?.seconds ? o.createdAt.seconds*1000 : 0;
       all += totalUSD;
@@ -1220,20 +1138,17 @@ function viewAdminStats(){
     box.innerHTML=`<p style="font-size:22px;font-weight:700;margin-top:8px;">Today: $${today.toFixed(2)}</p>
       <p style="font-size:18px;font-weight:700;margin-top:8px;">This week: $${week.toFixed(2)}</p>
       <p style="font-size:18px;font-weight:700;margin-top:8px;">All time: $${all.toFixed(2)}</p>
-      <p class="small" style="margin-top:8px;">${count} order(s) total. Equiv in L.L.: ${(all*USD_RATE).toLocaleString()} L.L.</p>`;
+      <p class="small" style="margin-top:8px;">${count} order(s). L.L. equiv: ${(all*USD_RATE).toLocaleString()}</p>`;
   })();
   return w;
 }
 
 (async function init(){
   const s=getSession();
-  if(s && s.key){ 
-    state.user=s; 
-    await loadWallet();
-    state.screen="home" 
-  } else { 
-    state.screen="login" 
-  }
+  if(s && s.role==="admin"){ state.role="admin"; state.screen="admin" }
+  else if(s && s.role==="driver" && s.driver){ state.role="driver"; state.driver=s.driver; state.screen="driverHome" }
+  else if(s && s.role==="customer" && s.user){ state.role="customer"; state.user=s.user; await loadWallet(); state.screen="home" }
+  else { state.screen="login" }
   render();
 })();
 </script>
