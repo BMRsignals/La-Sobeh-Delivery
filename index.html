@@ -109,6 +109,11 @@
   .order-card .id { font-size: 13px; font-weight: 700; color: #c8102e; }
   .order-card .name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
   .order-card .meta { font-size: 12px; color: #777; }
+  .resto-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+  .resto-logo {
+    width: 64px; height: 64px; border-radius: 12px; object-fit: cover;
+    background: #eee; flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
@@ -126,33 +131,53 @@ const WHISH_NUMBER = "71180336";
 const DRIVER_NAME = "Mizo";
 const DRIVER_PHONE = "03033331";
 
-const ZONES = ["Chtoura","Saadnayel","Karak","Ferzoul","Ablah","Tamnin","Rayak","Ksara"];
-
-const RESTAURANTS = [
-  { id:"r1", name:"Restaurant One", cuisine:"Lebanese Grill", location:"Zahle Main Street", menu:[
-    { id:"r1m1", name:"Mixed Grill Plate", price:450000 },
-    { id:"r1m2", name:"Chicken Taouk", price:320000 },
-    { id:"r1m3", name:"Hummus & Bread", price:120000 }
-  ]},
-  { id:"r2", name:"Restaurant Two", cuisine:"Fast Food & Snacks", location:"Saadnayel Highway", menu:[
-    { id:"r2m1", name:"Burger Meal", price:280000 },
-    { id:"r2m2", name:"Shawarma Sandwich", price:150000 },
-    { id:"r2m3", name:"Fries", price:90000 }
-  ]},
-  { id:"r3", name:"Restaurant Three", cuisine:"Pub & Bites", location:"Ksara Road", menu:[
-    { id:"r3m1", name:"Wings Basket", price:260000 },
-    { id:"r3m2", name:"Mozzarella Sticks", price:180000 },
-    { id:"r3m3", name:"Soft Drink", price:60000 }
-  ]}
+const ZONES = [
+  { name:"Zahle",     fee:200000 },
+  { name:"Chtoura",   fee:350000 },
+  { name:"Saadnayel", fee:350000 },
+  { name:"Karak",     fee:350000 },
+  { name:"Ferzoul",   fee:350000 },
+  { name:"Ablah",     fee:350000 },
+  { name:"Tamnin",    fee:350000 },
+  { name:"Rayak",     fee:350000 },
+  { name:"Ksara",     fee:350000 }
 ];
 
-const GROCERY = { id:"grocery", name:"La-Sobeh Grocery", location:"Zahle", menu:[
-  { id:"g1", name:"Bread Pack", price:30000 },
-  { id:"g2", name:"Milk 1L", price:90000 },
-  { id:"g3", name:"Eggs (30)", price:250000 },
-  { id:"g4", name:"Water 5L", price:45000 },
-  { id:"g5", name:"Rice 1kg", price:110000 }
-]};
+const RESTAURANTS = [
+  {
+    id:"efendim", name:"Efendim Restaurant", cuisine:"Turkish",
+    location:"Zahle", logo:"efendim.png.jpg",
+    menu:[
+      { id:"ef1", name:"Tawouk Sandwich",  price:700000 },
+      { id:"ef2", name:"Chicken Efendim",  price:1200000 }
+    ]
+  },
+  {
+    id:"grillgo", name:"Grill & Go Restaurant", cuisine:"Fast Food",
+    location:"Zahle", logo:"grillgo.png.jpg",
+    menu:[
+      { id:"gg1", name:"Zinger Combo", price:800000 },
+      { id:"gg2", name:"Cranch Boss",  price:600000 }
+    ]
+  },
+  {
+    id:"beitmisk", name:"Beit Misk Restaurant", cuisine:"Lebanese Grill",
+    location:"Zahle", logo:"beitmisk.png.jpg",
+    menu:[
+      { id:"bm1", name:"Kabab Plate",   price:700000 },
+      { id:"bm2", name:"Mandi Chicken", price:1200000 }
+    ]
+  }
+];
+
+const GROCERY = {
+  id:"grocery", name:"La-Sobeh Grocery", cuisine:"Grocery",
+  location:"Zahle", logo:"",
+  menu:[
+    { id:"g1", name:"Red Bull", price:500000 },
+    { id:"g2", name:"Pepsi",    price:100000 }
+  ]
+};
 
 let state = {
   screen:"login", user:null, category:null, vendor:null,
@@ -172,6 +197,8 @@ function el(html){ const d=document.createElement("div"); d.innerHTML=html.trim(
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])) }
 function cartCount(){ return state.cart.reduce((s,i)=>s+i.qty,0) }
 function cartTotal(){ return state.cart.reduce((s,i)=>s+i.price*i.qty,0) }
+function zoneFee(){ const z=ZONES.find(z=>z.name===state.zone); return z?z.fee:0 }
+function grandTotal(){ return cartTotal()+zoneFee() }
 
 function render(){
   const app=document.getElementById("app"); app.innerHTML="";
@@ -236,13 +263,21 @@ function viewHome(){
 function viewFoodList(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>Choose a restaurant</h2><p>3 restaurants available now.</p></div>
+    <div class="card"><h2>Choose a restaurant</h2><p>${RESTAURANTS.length} restaurants available now.</p></div>
     <div id="list"></div>
   </div>`);
   const list=w.querySelector("#list");
   RESTAURANTS.forEach(r=>{
-    const c=el(`<div class="card"><h2>${esc(r.name)}</h2><p>${esc(r.cuisine)} · 📍 ${esc(r.location)}</p>
-      <button class="btn btn-small" style="margin-top:10px;">View Menu</button></div>`);
+    const c=el(`<div class="card">
+      <div class="resto-row">
+        <img class="resto-logo" src="${r.logo}" alt="${esc(r.name)}" onerror="this.style.display='none'">
+        <div style="flex:1;">
+          <h2>${esc(r.name)}</h2>
+          <p>${esc(r.cuisine)} · 📍 ${esc(r.location)}</p>
+        </div>
+      </div>
+      <button class="btn btn-small" style="margin-top:10px;">View Menu</button>
+    </div>`);
     c.querySelector("button").onclick=()=>{ state.vendor=r; state.cart=[]; state.screen="vendor"; render() };
     list.appendChild(c);
   });
@@ -254,8 +289,10 @@ function viewVendor(){
   const v=state.vendor;
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p>
-      <a href="https://maps.google.com/?q=${encodeURIComponent(v.location)}" target="_blank">
+    <div class="card">
+      ${v.logo?`<div class="resto-row"><img class="resto-logo" src="${v.logo}" alt="" onerror="this.style.display='none'"><div style="flex:1;"><h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p></div></div>`
+              :`<h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p>`}
+      <a href="https://maps.google.com/?q=${encodeURIComponent(v.location+', Lebanon')}" target="_blank">
         <button class="btn btn-secondary btn-small" style="margin-top:8px;">🗺️ Open in Google Maps</button>
       </a>
     </div>
@@ -300,7 +337,11 @@ function viewCheckout(){
   if(cartCount()===0){ state.screen="vendor"; render(); return el(`<div></div>`) }
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>Your Order</h2><div id="items"></div><div class="order-total"><span>Total</span><span>${money(cartTotal())}</span></div></div>
+    <div class="card"><h2>Your Order</h2><div id="items"></div>
+      <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(cartTotal())}</span></div>
+      <div class="order-line"><span>Delivery Fee</span><span id="fee">${state.zone?money(zoneFee()):"—"}</span></div>
+      <div class="order-total"><span>Total</span><span id="grand">${money(grandTotal())}</span></div>
+    </div>
     <div class="card"><h2>Delivery Details</h2>
       <div class="input-group"><label>Full Name</label><input id="n" value="${esc(state.user.name)}"></div>
       <div class="input-group"><label>Phone</label><input id="p" value="${esc(state.user.phone)}"></div>
@@ -324,9 +365,14 @@ function viewCheckout(){
   });
   const zg=w.querySelector("#zg");
   ZONES.forEach(z=>{
-    const btn=el(`<button>${z}</button>`);
-    if(state.zone===z) btn.classList.add("selected");
-    btn.onclick=()=>{ state.zone=z; zg.querySelectorAll("button").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected") };
+    const btn=el(`<button>${z.name}</button>`);
+    if(state.zone===z.name) btn.classList.add("selected");
+    btn.onclick=()=>{ state.zone=z.name;
+      zg.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+      btn.classList.add("selected");
+      w.querySelector("#fee").textContent = money(zoneFee());
+      w.querySelector("#grand").textContent = money(grandTotal());
+    };
     zg.appendChild(btn);
   });
   const pg=w.querySelector("#pg");
@@ -349,7 +395,7 @@ function viewCheckout(){
       zone:state.zone, payment:state.payment,
       vendor:state.vendor.name,
       items:state.cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),
-      total:cartTotal(),
+      subtotal:cartTotal(), deliveryFee:zoneFee(), total:grandTotal(),
       status:"preparing",
       driver:DRIVER_NAME, driverPhone:DRIVER_PHONE,
       createdAt:new Date().toISOString()
@@ -376,6 +422,8 @@ function viewConfirm(){
       <p class="small" style="margin-top:8px;">📱 Chat with driver: coming soon (during active order only).</p>
     </div>
     <div class="card"><h2>Order Summary</h2><div id="s"></div>
+      <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal)}</span></div>
+      <div class="order-line"><span>Delivery Fee</span><span>${money(o.deliveryFee)}</span></div>
       <div class="order-total"><span>Total</span><span>${money(o.total)}</span></div>
       <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"💵 Cash on Delivery":"📱 Whish Money"} · Zone: ${esc(o.zone)}</p>
     </div>
@@ -400,7 +448,7 @@ function viewTrack(){
     </div>
     <div class="card"><h2>🗺️ Map</h2>
       <p>Live driver location will appear here (Stage 2, needs backend).</p>
-      <a href="https://maps.google.com/?q=${encodeURIComponent(o.zone+", Bekaa, Lebanon")}" target="_blank">
+      <a href="https://maps.google.com/?q=${encodeURIComponent(o.zone+', Bekaa, Lebanon')}" target="_blank">
         <button class="btn btn-secondary btn-small" style="margin-top:10px;">Open Zone in Google Maps</button>
       </a>
     </div>
@@ -486,8 +534,10 @@ function viewAdminOrder(){
       <a href="tel:${o.phone}"><button class="btn btn-small" style="margin-top:8px;">📞 Call Customer</button></a>
     </div>
     <div class="card"><h2>Items</h2><div id="it"></div>
+      <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal)}</span></div>
+      <div class="order-line"><span>Delivery Fee</span><span>${money(o.deliveryFee)}</span></div>
       <div class="order-total"><span>Total</span><span>${money(o.total)}</span></div>
-      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"💵 Cash on Delivery":"📱 Whish Money (${WHISH_NUMBER})"}</p>
+      <p class="small" style="margin-top:8px;">Payment: ${o.payment==="cod"?"💵 Cash on Delivery":"📱 Whish Money ("+WHISH_NUMBER+")"}</p>
     </div>
     <div class="card"><h2>Status</h2>
       <div class="payment-grid" id="st">
