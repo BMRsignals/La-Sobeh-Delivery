@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>La-Sobeh Delivery</title>
 <meta name="theme-color" content="#c8102e">
+<link rel="icon" href="la-sobeh-logo.png.jpg.jpg">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -12,12 +13,14 @@
     background: #f5f5f7; color: #1a1a1a; min-height: 100vh; padding-bottom: 90px;
   }
   header {
-    background: #c8102e; color: #fff; padding: 16px 18px;
+    background: #fff; color: #1a1a1a; padding: 12px 16px;
     position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    display: flex; align-items: center; gap: 12px;
   }
-  header h1 { font-size: 20px; font-weight: 700; }
-  header p { font-size: 12px; opacity: .85; margin-top: 2px; }
+  header img { height: 44px; width: auto; }
+  header .brand h1 { font-size: 17px; font-weight: 700; color: #c8102e; }
+  header .brand p { font-size: 11px; color: #777; margin-top: 1px; }
   .container { padding: 16px; max-width: 640px; margin: 0 auto; }
   .card {
     background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px;
@@ -29,6 +32,7 @@
     display: block; width: 100%; background: #c8102e; color: #fff;
     border: none; padding: 14px; font-size: 16px; font-weight: 600;
     border-radius: 12px; cursor: pointer; margin-top: 10px; text-align: center;
+    text-decoration: none;
   }
   .btn:active { background: #a00d24; }
   .btn-secondary { background: #fff; color: #c8102e; border: 2px solid #c8102e; }
@@ -50,28 +54,33 @@
   }
   .input-group textarea { min-height: 80px; resize: vertical; }
   .menu-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 0; border-bottom: 1px solid #eee;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid #eee;
   }
   .menu-item:last-child { border-bottom: none; }
+  .menu-item .thumb {
+    width: 68px; height: 68px; border-radius: 10px; object-fit: cover;
+    background: #eee; flex-shrink: 0;
+  }
+  .menu-item .info { flex: 1; min-width: 0; }
   .menu-item .name { font-size: 15px; font-weight: 600; }
   .menu-item .price { font-size: 13px; color: #c8102e; font-weight: 600; margin-top: 2px; }
   .add-btn {
-    background: #c8102e; color: #fff; border: none; padding: 8px 16px;
-    border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+    background: #c8102e; color: #fff; border: none; padding: 8px 14px;
+    border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
   }
-  .qty-control { display: flex; align-items: center; gap: 10px; }
+  .qty-control { display: flex; align-items: center; gap: 8px; }
   .qty-control button {
-    width: 32px; height: 32px; border-radius: 50%; border: none;
-    background: #c8102e; color: #fff; font-size: 18px; font-weight: 700; cursor: pointer;
+    width: 30px; height: 30px; border-radius: 50%; border: none;
+    background: #c8102e; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
   }
-  .qty-control span { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; }
+  .qty-control span { font-size: 14px; font-weight: 600; min-width: 18px; text-align: center; }
   .cart-bar {
     position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; color: #fff;
     padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
     box-shadow: 0 -2px 10px rgba(0,0,0,.2); cursor: pointer;
   }
-  .cart-bar .count { font-size: 14px; }
+  .cart-bar .count { font-size: 13px; opacity: .85; }
   .cart-bar .total { font-size: 16px; font-weight: 700; }
   .pill {
     display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 600;
@@ -89,11 +98,10 @@
   .zone-grid button.selected { background: #c8102e; color: #fff; border-color: #c8102e; }
   .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
   .payment-grid button {
-    padding: 14px 8px; font-size: 14px; font-weight: 600;
+    padding: 14px 8px; font-size: 13px; font-weight: 600;
     border: 2px solid #ddd; background: #fff; border-radius: 12px; cursor: pointer;
   }
   .payment-grid button.selected { border-color: #c8102e; background: #ffe5e9; color: #c8102e; }
-  .hidden { display: none !important; }
   .order-line { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
   .order-total {
     display: flex; justify-content: space-between; padding-top: 10px;
@@ -114,19 +122,23 @@
     width: 64px; height: 64px; border-radius: 12px; object-fit: cover;
     background: #eee; flex-shrink: 0;
   }
+  .login-logo { display: block; max-width: 180px; margin: 0 auto 14px; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🍔 La-Sobeh Delivery</h1>
-  <p>Zahle · Bekaa Valley — Fast local delivery</p>
+  <img src="la-sobeh-logo.png.jpg.jpg" alt="La-Sobeh" onerror="this.style.display='none'">
+  <div class="brand">
+    <h1>La-Sobeh Delivery</h1>
+    <p>Zahle · Bekaa Valley · 24/7</p>
+  </div>
 </header>
 
 <div id="app" class="container"></div>
 
 <script>
-const ADMIN_EMAIL = "rey_lebanon1@outlook.com";
+const ADMIN_PIN = "3397";
 const WHISH_NUMBER = "71180336";
 const DRIVER_NAME = "Mizo";
 const DRIVER_PHONE = "03033331";
@@ -148,24 +160,24 @@ const RESTAURANTS = [
     id:"efendim", name:"Efendim Restaurant", cuisine:"Turkish",
     location:"Zahle", logo:"efendim.png.jpg",
     menu:[
-      { id:"ef1", name:"Tawouk Sandwich",  price:700000 },
-      { id:"ef2", name:"Chicken Efendim",  price:1200000 }
+      { id:"ef1", name:"Tawouk Sandwich",  price:700000,  img:"efendim-tawouk.png.jpg.JPG" },
+      { id:"ef2", name:"Chicken Efendim",  price:1200000, img:"efendim-chicken.png.jpg.JPG" }
     ]
   },
   {
     id:"grillgo", name:"Grill & Go Restaurant", cuisine:"Fast Food",
     location:"Zahle", logo:"grillgo.png.jpg",
     menu:[
-      { id:"gg1", name:"Zinger Combo", price:800000 },
-      { id:"gg2", name:"Cranch Boss",  price:600000 }
+      { id:"gg1", name:"Zinger Combo", price:800000, img:"grillgo-zinger.png.jpg.JPG" },
+      { id:"gg2", name:"Cranch Boss",  price:600000, img:"grillgo-cranch.png.jpg.JPG" }
     ]
   },
   {
     id:"beitmisk", name:"Beit Misk Restaurant", cuisine:"Lebanese Grill",
     location:"Zahle", logo:"beitmisk.png.jpg",
     menu:[
-      { id:"bm1", name:"Kabab Plate",   price:700000 },
-      { id:"bm2", name:"Mandi Chicken", price:1200000 }
+      { id:"bm1", name:"Kabab Plate",   price:700000,  img:"beitmisk-kabab.png.jpg.WEBP" },
+      { id:"bm2", name:"Mandi Chicken", price:1200000, img:"beitmisk-mandi.png.jpg.AVIF" }
     ]
   }
 ];
@@ -174,8 +186,8 @@ const GROCERY = {
   id:"grocery", name:"La-Sobeh Grocery", cuisine:"Grocery",
   location:"Zahle", logo:"",
   menu:[
-    { id:"g1", name:"Red Bull", price:500000 },
-    { id:"g2", name:"Pepsi",    price:100000 }
+    { id:"g1", name:"Red Bull", price:500000, img:"grocery-redbull.png.jpg.WEBP" },
+    { id:"g2", name:"Pepsi",    price:100000, img:"grocery-pepsi.png.jpg.WEBP" }
   ]
 };
 
@@ -184,7 +196,7 @@ let state = {
   cart:[], zone:null, payment:null, currentOrder:null
 };
 
-const LSK = { users:"lasobeh_users", orders:"lasobeh_orders", session:"lasobeh_session" };
+const LSK = { users:"lasobeh_users2", orders:"lasobeh_orders2", session:"lasobeh_session2" };
 function loadUsers(){ try{return JSON.parse(localStorage.getItem(LSK.users))||{}}catch(e){return{}} }
 function saveUsers(u){ localStorage.setItem(LSK.users, JSON.stringify(u)) }
 function loadOrders(){ try{return JSON.parse(localStorage.getItem(LSK.orders))||[]}catch(e){return[]} }
@@ -199,6 +211,7 @@ function cartCount(){ return state.cart.reduce((s,i)=>s+i.qty,0) }
 function cartTotal(){ return state.cart.reduce((s,i)=>s+i.price*i.qty,0) }
 function zoneFee(){ const z=ZONES.find(z=>z.name===state.zone); return z?z.fee:0 }
 function grandTotal(){ return cartTotal()+zoneFee() }
+function phoneKey(p){ return p.replace(/[^0-9+]/g,"") }
 
 function render(){
   const app=document.getElementById("app"); app.innerHTML="";
@@ -219,35 +232,36 @@ function render(){
 
 function viewLogin(){
   const w=el(`<div>
-    <div class="card"><h2>Welcome 👋</h2><p>Login with your email to place an order. You can track your orders anytime.</p></div>
+    <img class="login-logo" src="la-sobeh-logo.png.jpg.jpg" alt="La-Sobeh Delivery" onerror="this.style.display='none'">
+    <div class="card"><h2>Welcome 👋</h2><p>Login with your name and phone number to place an order.</p></div>
     <div class="card">
-      <div class="input-group"><label>Email</label><input id="le" type="email" placeholder="you@example.com"></div>
       <div class="input-group"><label>Full Name</label><input id="ln" type="text" placeholder="Your name"></div>
-      <div class="input-group"><label>Phone</label><input id="lp" type="tel" placeholder="70 123 456"></div>
+      <div class="input-group"><label>Phone Number</label><input id="lp" type="tel" placeholder="70 123 456"></div>
       <button class="btn" id="lb">Login / Register</button>
-      <p class="small center" style="margin-top:12px;">Later we'll add Lebanese phone number login.</p>
+      <p class="small center" style="margin-top:12px;">We'll ask for verification by SMS later.</p>
     </div>
     <button class="btn btn-secondary btn-small" id="al">Admin login →</button>
   </div>`);
   w.querySelector("#lb").onclick=()=>{
-    const e=w.querySelector("#le").value.trim().toLowerCase();
     const n=w.querySelector("#ln").value.trim();
     const p=w.querySelector("#lp").value.trim();
-    if(!e||!n||!p){alert("Please fill all fields.");return}
-    if(!e.includes("@")){alert("Please enter a valid email.");return}
-    const users=loadUsers(); users[e]={email:e,name:n,phone:p}; saveUsers(users);
-    state.user=users[e]; setSession(state.user); state.screen="home"; render();
+    if(!n){alert("Please enter your name.");return}
+    if(!p || p.replace(/[^0-9]/g,"").length<7){alert("Please enter a valid phone number (at least 7 digits).");return}
+    const key=phoneKey(p);
+    const users=loadUsers();
+    if(!users[key]) users[key]={name:n,phone:p};
+    saveUsers(users);
+    state.user={name:users[key].name, phone:users[key].phone, key:key};
+    setSession(state.user); state.screen="home"; render();
   };
   w.querySelector("#al").onclick=()=>{ state.screen="adminLogin"; render() };
   return w;
 }
 
 function viewHome(){
-  const isAdmin = state.user && state.user.email===ADMIN_EMAIL;
   const w=el(`<div>
-    ${isAdmin?`<button class="btn btn-secondary btn-small" id="ap" style="margin-bottom:12px;">🔐 Admin Panel</button>`:""}
     <div class="card"><h2>Hi ${esc(state.user.name)} 👋</h2><p>What would you like today?</p></div>
-    <div class="big-option" id="fo"><span class="emoji">🍽️</span><h3>Food</h3><p>Restaurants · Snacks · Pubs</p></div>
+    <div class="big-option" id="fo"><span class="emoji">🍽️</span><h3>Food</h3><p>Efendim · Grill & Go · Beit Misk</p></div>
     <div class="big-option" id="go"><span class="emoji">🛒</span><h3>Grocery</h3><p>From La-Sobeh Grocery</p></div>
     <button class="btn btn-secondary btn-small" id="mo">📦 My Orders</button>
     <button class="btn btn-secondary btn-small" id="lo">Logout</button>
@@ -256,7 +270,6 @@ function viewHome(){
   w.querySelector("#go").onclick=()=>{ state.category="grocery"; state.vendor=GROCERY; state.cart=[]; state.screen="vendor"; render() };
   w.querySelector("#mo").onclick=()=>{ state.screen="myOrders"; render() };
   w.querySelector("#lo").onclick=()=>{ state.user=null; setSession(null); state.screen="login"; render() };
-  const ap=w.querySelector("#ap"); if(ap) ap.onclick=()=>{ state.screen="admin"; render() };
   return w;
 }
 
@@ -292,16 +305,20 @@ function viewVendor(){
     <div class="card">
       ${v.logo?`<div class="resto-row"><img class="resto-logo" src="${v.logo}" alt="" onerror="this.style.display='none'"><div style="flex:1;"><h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p></div></div>`
               :`<h2>${esc(v.name)}</h2><p>📍 ${esc(v.location)}</p>`}
-      <a href="https://maps.google.com/?q=${encodeURIComponent(v.location+', Lebanon')}" target="_blank">
-        <button class="btn btn-secondary btn-small" style="margin-top:8px;">🗺️ Open in Google Maps</button>
-      </a>
+      <a class="btn btn-secondary btn-small" style="margin-top:8px;" href="https://maps.google.com/?q=${encodeURIComponent(v.location+', Lebanon')}" target="_blank">🗺️ Open in Google Maps</a>
     </div>
     <div class="card"><h2>Menu</h2><div id="menu"></div></div>
   </div>`);
   const menu=w.querySelector("#menu");
   v.menu.forEach(item=>{
-    const row=el(`<div class="menu-item"><div><div class="name">${esc(item.name)}</div><div class="price">${money(item.price)}</div></div>
-      <div class="qty" id="q-${item.id}"></div></div>`);
+    const imgTag = item.img
+      ? `<img class="thumb" src="${item.img}" alt="" onerror="this.style.display='none'">`
+      : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:30px;">🍽️</div>`;
+    const row=el(`<div class="menu-item">
+      ${imgTag}
+      <div class="info"><div class="name">${esc(item.name)}</div><div class="price">${money(item.price)}</div></div>
+      <div class="qty"></div>
+    </div>`);
     menu.appendChild(row);
     paintQty(item, row.querySelector(".qty"));
   });
@@ -391,7 +408,7 @@ function viewCheckout(){
     if(!state.payment){alert("Please choose a payment method.");return}
     const order={
       id:"LS-"+Date.now().toString().slice(-6),
-      email:state.user.email, name:n, phone:p, address:a,
+      userKey:state.user.key, name:n, phone:p, address:a,
       zone:state.zone, payment:state.payment,
       vendor:state.vendor.name,
       items:state.cart.map(c=>({name:c.name,qty:c.qty,price:c.price})),
@@ -418,7 +435,7 @@ function viewConfirm(){
     </div>
     <div class="card"><h2>Driver Assigned</h2>
       <p style="margin-top:6px;">👤 <b>${esc(o.driver)}</b> will deliver your order.</p>
-      <a href="tel:${o.driverPhone}"><button class="btn" style="margin-top:12px;">📞 Call ${esc(o.driver)}</button></a>
+      <a class="btn" style="margin-top:12px;" href="tel:${o.driverPhone}">📞 Call ${esc(o.driver)}</a>
       <p class="small" style="margin-top:8px;">📱 Chat with driver: coming soon (during active order only).</p>
     </div>
     <div class="card"><h2>Order Summary</h2><div id="s"></div>
@@ -444,13 +461,11 @@ function viewTrack(){
     <div class="card"><h2>Order ${o.id}</h2>
       <p style="margin-top:6px;">Status: <span class="pill ${o.status}">${statusLabel(o.status)}</span></p>
       <p style="margin-top:6px;">Driver: <b>${esc(o.driver)}</b></p>
-      <a href="tel:${o.driverPhone}"><button class="btn" style="margin-top:10px;">📞 Call Driver</button></a>
+      <a class="btn" style="margin-top:10px;" href="tel:${o.driverPhone}">📞 Call Driver</a>
     </div>
     <div class="card"><h2>🗺️ Map</h2>
       <p>Live driver location will appear here (Stage 2, needs backend).</p>
-      <a href="https://maps.google.com/?q=${encodeURIComponent(o.zone+', Bekaa, Lebanon')}" target="_blank">
-        <button class="btn btn-secondary btn-small" style="margin-top:10px;">Open Zone in Google Maps</button>
-      </a>
+      <a class="btn btn-secondary btn-small" style="margin-top:10px;" href="https://maps.google.com/?q=${encodeURIComponent(o.zone+', Bekaa, Lebanon')}" target="_blank">Open Zone in Google Maps</a>
     </div>
   </div>`);
   w.querySelector("#b").onclick=()=>{ state.screen="confirm"; render() };
@@ -466,7 +481,7 @@ function viewMyOrders(){
     <div id="list"></div>
   </div>`);
   const list=w.querySelector("#list");
-  const mine=loadOrders().filter(o=>o.email===state.user.email);
+  const mine=loadOrders().filter(o=>o.userKey===state.user.key);
   if(mine.length===0){ list.appendChild(el(`<div class="card center"><p>No orders yet.</p></div>`)) }
   mine.forEach(o=>{
     const c=el(`<div class="order-card"><div class="top"><span class="id">${o.id}</span><span class="pill ${o.status}">${statusLabel(o.status)}</span></div>
@@ -482,18 +497,15 @@ function viewMyOrders(){
 function viewAdminLogin(){
   const w=el(`<div>
     <button class="btn btn-secondary btn-small" id="b" style="margin-bottom:12px;">← Back</button>
-    <div class="card"><h2>Admin Login</h2><p>Enter the admin email to view orders.</p></div>
+    <div class="card"><h2>Admin Login</h2><p>Enter PIN to access the admin panel.</p></div>
     <div class="card">
-      <div class="input-group"><label>Admin Email</label><input id="ae" type="email" placeholder="${ADMIN_EMAIL}"></div>
+      <div class="input-group"><label>PIN</label><input id="pin" type="tel" maxlength="6" placeholder="••••" style="font-size:22px;letter-spacing:8px;text-align:center;"></div>
       <button class="btn" id="ab">Enter Admin Panel</button>
     </div>
   </div>`);
   w.querySelector("#ab").onclick=()=>{
-    const e=w.querySelector("#ae").value.trim().toLowerCase();
-    if(e!==ADMIN_EMAIL){alert("Not an admin email.");return}
-    const users=loadUsers();
-    if(!users[e]) users[e]={email:e,name:"Admin",phone:""};
-    saveUsers(users); state.user=users[e]; setSession(state.user);
+    const pin=w.querySelector("#pin").value.trim();
+    if(pin!==ADMIN_PIN){alert("Wrong PIN.");return}
     state.screen="admin"; render();
   };
   w.querySelector("#b").onclick=()=>{ state.screen="login"; render() };
@@ -531,7 +543,7 @@ function viewAdminOrder(){
       <p>📞 ${esc(o.phone)}</p>
       <p>📍 ${esc(o.zone)}</p>
       <p style="margin-top:6px;">${esc(o.address)}</p>
-      <a href="tel:${o.phone}"><button class="btn btn-small" style="margin-top:8px;">📞 Call Customer</button></a>
+      <a class="btn btn-small" style="margin-top:8px;" href="tel:${o.phone}">📞 Call Customer</a>
     </div>
     <div class="card"><h2>Items</h2><div id="it"></div>
       <div class="order-line" style="margin-top:8px;"><span>Subtotal</span><span>${money(o.subtotal)}</span></div>
@@ -563,7 +575,7 @@ function viewAdminOrder(){
 
 (function init(){
   const s=getSession();
-  if(s && s.email){ state.user=s; state.screen="home" } else { state.screen="login" }
+  if(s && s.key){ state.user=s; state.screen="home" } else { state.screen="login" }
   render();
 })();
 </script>
